@@ -1,0 +1,133 @@
+$(document).ready(function () {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    const userId = parseInt(localStorage.getItem("userId"), 10);
+    if (!token) {
+        window.location.href = '/login';
+        return;
+    }
+
+    let teacherGroupIds = [];
+    let existingReports = [];
+
+    function renderAddReportForm() {
+        $('#app').html(`
+            <div class="container mt-5 pt-5">
+                <h2 class="text-center mb-4 mainh1">Добавить отчёт о занятии</h2>
+                <div id="reportMsg" class="text-center mb-3" style="display:none;"></div>
+                <form id="addReportForm" class="shadow p-4 rounded bg-light">
+                    <div class="mb-4">
+                        <label class="form-label">Занятие</label>
+                        <select class="form-select" id="scheduleSelect" required>
+                            <option value="">Выберите занятие</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Описание отчёта</label>
+                        <textarea class="form-control" id="reportDescription" rows="5" placeholder="Введите описание отчёта."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-coddy btn-lg w-100">Добавить отчёт</button>
+                </form>
+            </div>
+        `);
+        bindReportEvents();
+    }
+
+    function showReportMessage(text, type) {
+        const msg = $('#reportMsg');
+        msg.removeClass('text-success text-danger').addClass(type === 'success' ? 'text-success' : 'text-danger');
+        msg.text(text).show();
+        setTimeout(() => msg.fadeOut(), 5000);
+    }
+
+    function loadSchedules() {
+        $.ajax({
+            url: "http://localhost:8000/schedules",
+            method: "GET",
+            headers: { "Authorization": `Bearer ${token}` },
+            success: function (schedulesData) {
+                $.ajax({
+                    url: "http://localhost:8000/reports",
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` }
+                }).done(function (reportsData) {
+                    existingReports = reportsData.map(r => r.schedule_id);
+                    let schedules = schedulesData;
+                    if (role === 'Преподаватель') {
+                        schedules = schedules.filter(s => teacherGroupIds.includes(s.group.group_id));
+                    }
+                    const today = new Date();
+                    const options = schedules.map(s => {
+                        const lessonDate = new Date(s.date);
+                        const diffDays = Math.floor((today - lessonDate) / (1000 * 60 * 60 * 24));
+                        const ago = getDaysAgoString(diffDays);
+                        const groupName = s.group?.group_name || '-';
+                        const isReported = existingReports.includes(s.schedule_id);
+                        return `<option value="${s.schedule_id}" ${isReported ? 'disabled' : ''} style="background-color: ${isReported ? '#d4edda' : '#f8d7da'};">
+                            ${s.date} (${ago}) / ${groupName}${isReported ? ' - Отчёт добавлен' : ''}
+                        </option>`;
+                    }).join('');
+                    $('#scheduleSelect').append(options);
+                });
+            },
+            error: function () {
+                showReportMessage('Ошибка при загрузке расписаний', 'danger');
+            }
+        });
+    }
+
+    function getDaysAgoString(diff) {
+        if (diff === 0) return 'сегодня';
+        if (diff === 1) return '1 день назад';
+        const rem10 = diff % 10;
+        const rem100 = diff % 100;
+        if (rem10 >= 2 && rem10 <= 4 && !(rem100 >= 12 && rem100 <= 14)) return diff + ' дня назад';
+        return diff + ' дней назад';
+    }
+
+    function bindReportEvents() {
+        $('#app').on('submit', '#addReportForm', function (e) {
+            e.preventDefault();
+            const scheduleId = parseInt($('#scheduleSelect').val(), 10);
+            if (existingReports.includes(scheduleId)) {
+                showReportMessage('Отчёт по этому занятию уже добавлен', 'danger');
+                return;
+            }
+            const payload = {
+                schedule_id: scheduleId,
+                description: $('#reportDescription').val()
+            };
+            $.ajax({
+                url: "http://localhost:8000/reports",
+                method: "POST",
+                headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                data: JSON.stringify(payload),
+                success: function () {
+                    showReportMessage('Отчёт успешно добавлен', 'success');
+                    $('#addReportForm')[0].reset();
+                    $('#scheduleSelect').empty().append('<option value="">Выберите занятие</option>');
+                    loadSchedules();
+                },
+                error: function (xhr) {
+                    const txt = xhr.responseJSON?.detail || xhr.responseText || 'Ошибка при добавлении отчёта';
+                    showReportMessage(txt, 'danger');
+                }
+            });
+        });
+    }
+
+    renderAddReportForm();
+    if (role === 'Преподаватель') {
+        $.ajax({
+            url: "http://localhost:8000/groups/info",
+            method: "GET",
+            headers: { "Authorization": `Bearer ${token}` }
+        }).done(function (groups) {
+            teacherGroupIds = groups.filter(g => g.teacher && g.teacher.user_id === userId).map(g => g.group_id);
+        }).always(function () {
+            loadSchedules();
+        });
+    } else {
+        loadSchedules();
+    }
+});
