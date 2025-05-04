@@ -8,12 +8,12 @@ $(document).ready(function() {
     let allGroups = [];
 
     const API = {
-        groupsInfo: 'http://localhost:8000/groups/info',
-        teachers: 'http://localhost:8000/teachers',
-        students: 'http://localhost:8000/filtered-users?role=Ученик',
-        createGroup: 'http://localhost:8000/groups',
-        courses: 'http://localhost:8000/courses',
-        courseInfo: id => `http://localhost:8000/courses/${id}`
+        groupsInfo: 'http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/groups/info',
+        teachers: 'http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/teachers',
+        students: 'http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/filtered-users?role=Ученик',
+        createGroup: 'http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/groups',
+        courses: 'http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/courses',
+        courseInfo: id => `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/courses/${id}`
     };
 
     function fetchData(url) {

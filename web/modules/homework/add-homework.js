@@ -42,12 +42,12 @@ $(document).ready(function () {
 
     function loadSchedules() {
         $.ajax({
-            url: "http://localhost:8000/schedules",
+            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/schedules",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function (schedulesData) {
                 $.ajax({
-                    url: "http://localhost:8000/homeworks",
+                    url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/homeworks",
                     method: "GET",
                     headers: { "Authorization": `Bearer ${token}` }
                 }).done(function (homeworksData) {
@@ -98,7 +98,7 @@ $(document).ready(function () {
                 description: $('#homeworkDescription').val()
             };
             $.ajax({
-                url: "http://localhost:8000/homeworks",
+                url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/homeworks",
                 method: "POST",
                 headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
                 data: JSON.stringify(payload),
@@ -119,7 +119,7 @@ $(document).ready(function () {
     renderAddHomeworkForm();
     if (role === 'Преподаватель') {
         $.ajax({
-            url: "http://localhost:8000/groups/info",
+            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/groups/info",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         }).done(function (groups) {

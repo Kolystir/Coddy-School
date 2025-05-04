@@ -20,7 +20,7 @@ $(document).ready(function () {
 
     function loadSchedules() {
         return $.ajax({
-            url: "http://localhost:8000/schedules",
+            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/schedules",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function(data) {
@@ -36,7 +36,7 @@ $(document).ready(function () {
     function loadGroups() {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: "http://localhost:8000/groups/info",
+                url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/groups/info",
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },
                 success: function(data) {
@@ -69,7 +69,7 @@ $(document).ready(function () {
 
     function loadHomeworks() {
         $.ajax({
-            url: "http://localhost:8000/homeworks",
+            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/homeworks",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function(homeworks) {
@@ -205,12 +205,12 @@ $(document).ready(function () {
     });
     $(document).on('click', '#confirmDeleteBtn', function() {
         if (!homeworkToDeleteId) return;
-        $.ajax({ url: `http://localhost:8000/homeworks/${homeworkToDeleteId}`, method: 'DELETE', headers: { "Authorization": `Bearer ${token}` }, success: function() { showMessage('Домашнее задание удалено','success'); loadHomeworks(); }, error: function() { showMessage('Ошибка при удалении','danger'); }, complete: function() { bootstrap.Modal.getInstance($('#deleteConfirmModal')).hide(); }});
+        $.ajax({ url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/homeworks/${homeworkToDeleteId}`, method: 'DELETE', headers: { "Authorization": `Bearer ${token}` }, success: function() { showMessage('Домашнее задание удалено','success'); loadHomeworks(); }, error: function() { showMessage('Ошибка при удалении','danger'); }, complete: function() { bootstrap.Modal.getInstance($('#deleteConfirmModal')).hide(); }});
     });
     $(document).on('click', '.editHomework', function() { editingHomeworkId = $(this).data('id'); $('#homeworkDescription').val($(this).data('description')); new bootstrap.Modal($('#editHomeworkModal')).show(); });
     $(document).on('submit', '#editHomeworkForm', function(e) {
         e.preventDefault(); const newDesc = $('#homeworkDescription').val(); if (!editingHomeworkId) return;
-        $.ajax({ url: `http://localhost:8000/homeworks/${editingHomeworkId}`, method: 'PUT', headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }, data: JSON.stringify({ description: newDesc }), success: function() { showMessage('Домашнее задание обновлено','success'); bootstrap.Modal.getInstance($('#editHomeworkModal')).hide(); loadHomeworks(); }, error: function() { showMessage('Ошибка при обновлении','danger'); }});
+        $.ajax({ url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/homeworks/${editingHomeworkId}`, method: 'PUT', headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }, data: JSON.stringify({ description: newDesc }), success: function() { showMessage('Домашнее задание обновлено','success'); bootstrap.Modal.getInstance($('#editHomeworkModal')).hide(); loadHomeworks(); }, error: function() { showMessage('Ошибка при обновлении','danger'); }});
     });
     $(document).on('change', '#dateFilter, #groupFilter', function() {
         const date = $('#dateFilter').val(); const grp = $('#groupFilter').val();

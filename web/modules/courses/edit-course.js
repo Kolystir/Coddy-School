@@ -12,7 +12,7 @@ $(document).ready(function () {
 
   function loadCourseList() {
     $.ajax({
-      url: "http://localhost:8000/courses-page",
+      url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/courses-page",
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
       success(courses) {
@@ -111,7 +111,7 @@ $(document).ready(function () {
 
   function loadTeacherOptions() {
     $.ajax({
-      url: "http://localhost:8000/teachers",
+      url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/teachers",
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
       success(teachers) {
@@ -149,7 +149,7 @@ $(document).ready(function () {
   $(document).on("click", "#confirmDeleteBtn", function () {
     const id = window.courseToDelete;
     $.ajax({
-      url: `http://localhost:8000/courses/${id}`,
+      url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/courses/${id}`,
       type: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
       success(res) {
@@ -174,12 +174,12 @@ $(document).ready(function () {
 
   function loadEditForm(id) {
     $.ajax({
-      url: `http://localhost:8000/courses/${id}`,
+      url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/courses/${id}`,
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
       success(course) {
         $.ajax({
-          url: "http://localhost:8000/teachers",
+          url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/teachers",
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
           success(teachers) {
@@ -257,7 +257,7 @@ $(document).ready(function () {
       };
 
       $.ajax({
-        url: `http://localhost:8000/courses/${course.course_id}`,
+        url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/courses/${course.course_id}`,
         type: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         contentType: "application/json",

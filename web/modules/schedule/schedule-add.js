@@ -14,7 +14,7 @@ $(document).ready(function() {
 
     function loadGroups() {
         return $.ajax({
-            url: "http://localhost:8000/groups/info",
+            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/groups/info",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         });
@@ -22,7 +22,7 @@ $(document).ready(function() {
 
     function loadSchedules() {
         return $.ajax({
-            url: "http://localhost:8000/schedules",
+            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/schedules",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         });
@@ -118,7 +118,7 @@ $(document).ready(function() {
                 group_id: parseInt($('#groupSelect').val(), 10)
             };
             $.ajax({
-                url: "http://localhost:8000/schedules",
+                url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/schedules",
                 method: "POST",
                 headers: { "Authorization": `Bearer ${token}` },
                 data: JSON.stringify(payload),

@@ -21,7 +21,7 @@ $(document).ready(function () {
     // Загрузка расписаний
     function loadSchedules() {
         return $.ajax({
-            url: "http://localhost:8000/schedules",
+            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/schedules",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function(data) {
@@ -39,7 +39,7 @@ $(document).ready(function () {
     function loadGroups() {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: "http://localhost:8000/groups/info",
+                url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/groups/info",
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },
                 success: function(data) {
@@ -73,7 +73,7 @@ $(document).ready(function () {
     // Загрузка отчётов
     function loadReports() {
         return $.ajax({
-            url: "http://localhost:8000/reports",
+            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/reports",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function(reports) {
@@ -225,7 +225,7 @@ $(document).ready(function () {
     $(document).on('click', '#confirmDeleteBtn', function() {
         if (!reportToDeleteId) return;
         $.ajax({
-            url: `http://localhost:8000/reports/${reportToDeleteId}`,
+            url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/reports/${reportToDeleteId}`,
             method: 'DELETE',
             headers: { "Authorization": `Bearer ${token}` },
             success: function() {
@@ -252,7 +252,7 @@ $(document).ready(function () {
         const newDesc = $('#reportDescription').val();
         if (!editingReportId) return;
         $.ajax({
-            url: `http://localhost:8000/reports/${editingReportId}`,
+            url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/reports/${editingReportId}`,
             method: 'PUT',
             headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
             data: JSON.stringify({ description: newDesc }),

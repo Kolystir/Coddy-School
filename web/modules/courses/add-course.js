@@ -8,7 +8,7 @@ $(document).ready(function () {
 
     function loadTeachers() {
         $.ajax({
-            url: "http://localhost:8000/teachers",
+            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/teachers",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function (response) {
@@ -76,7 +76,7 @@ $(document).ready(function () {
         };
 
         $.ajax({
-            url: "http://localhost:8000/create-course",
+            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/create-course",
             type: "POST",
             headers: { "Authorization": `Bearer ${token}` },
             data: JSON.stringify(formData),
@@ -106,7 +106,7 @@ $(document).ready(function () {
 
     function loadCourses() {
         $.ajax({
-            url: "http://localhost:8000/courses-page",
+            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/courses-page",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function (response) {

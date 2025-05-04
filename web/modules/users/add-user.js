@@ -127,7 +127,7 @@ $(document).ready(function () {
     $('#roleFilter').on('change', function() { getFilteredUsers($(this).val()); });
     function getFilteredUsers(role) {
         const params = role ? `role=${role}` : '';
-        $.ajax({ url: `http://localhost:8000/filtered-users?${params}`, method: 'GET', headers: { "Authorization": `Bearer ${token}` }, success: updateUsersTable });
+        $.ajax({ url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/filtered-users?${params}`, method: 'GET', headers: { "Authorization": `Bearer ${token}` }, success: updateUsersTable });
     }
     function updateUsersTable(users) {
         const tbody = $("#usersTable tbody").empty();
@@ -140,7 +140,7 @@ $(document).ready(function () {
         e.preventDefault();
         const data = { first_name: $('#firstName').val(), last_name: $('#lastName').val(), middle_name: $('#middleName').val(), username: $('#username').val(), password: $('#password').val(), role: $('#role').val() };
         $.ajax({
-            url: "http://localhost:8000/create-user",
+            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/create-user",
             type: "POST",
             contentType: "application/json",
             headers: { "Authorization": `Bearer ${token}` },

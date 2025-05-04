@@ -54,7 +54,7 @@ $(document).ready(function () {
       }
       // Забираем текущие данные пользователя
       $.ajax({
-        url: `http://localhost:8000/users-edit/${userId}`,
+        url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/users-edit/${userId}`,
         method: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (data) {
@@ -94,7 +94,7 @@ $(document).ready(function () {
       if (pw) payload.password = pw;
   
       $.ajax({
-        url: "http://localhost:8000/users/me",
+        url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/users/me",
         method: "PUT",
         contentType: "application/json",
         headers: { "Authorization": `Bearer ${token}` },
