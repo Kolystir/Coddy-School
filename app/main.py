@@ -5,9 +5,7 @@ from app.api.routes import router
 app = FastAPI()
 # Разрешенные источники
 origins = [
-    "http://localhost",
-    "http://localhost:8000",
-    "http://coddyschool",
+    "https://kolystir.github.io/Coddy-School/",
 ]
 
 app.add_middleware(
