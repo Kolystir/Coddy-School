@@ -54,7 +54,7 @@ $(document).ready(function () {
 
   function loadTeachers() {
     return $.ajax({
-      url: "${API_BASE}/courses/teacher_info/all",
+      url: `${API_BASE}/courses/teacher_info/all`,
       method: "GET",
       dataType: "json",
       success: function (data) {
@@ -117,7 +117,7 @@ $(document).ready(function () {
 
   function loadCourses() {
     return $.ajax({
-      url: '${API_BASE}/courses/teacher_info/all',
+      url: `${API_BASE}/courses/teacher_info/all`,
       method: "GET",
       dataType: "json",
       success: function (data) {
