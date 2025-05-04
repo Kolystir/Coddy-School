@@ -57,9 +57,9 @@ $(document).ready(function () {
     async function fetchAllData() {
         try {
             const [scheduleRes, homeworkRes, reportRes] = await Promise.all([
-                fetch("http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/schedules", { headers: { "Authorization": `Bearer ${token}` } }),
-                fetch("http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/homeworks", { headers: { "Authorization": `Bearer ${token}` } }),
-                fetch("http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/reports", { headers: { "Authorization": `Bearer ${token}` } })
+                fetch("${API_BASE}/schedules", { headers: { "Authorization": `Bearer ${token}` } }),
+                fetch("${API_BASE}/homeworks", { headers: { "Authorization": `Bearer ${token}` } }),
+                fetch("${API_BASE}/reports", { headers: { "Authorization": `Bearer ${token}` } })
             ]);
             allSchedules = await scheduleRes.json();
             homeworks = await homeworkRes.json();

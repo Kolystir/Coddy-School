@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
   function loadWelcomeSection() {
     const welcomeHTML = `
               <section id="hero">
@@ -53,7 +54,7 @@ $(document).ready(function () {
 
   function loadTeachers() {
     return $.ajax({
-      url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app/courses/teacher_info/all",
+      url: "${API_BASE}/courses/teacher_info/all",
       method: "GET",
       dataType: "json",
       success: function (data) {
@@ -116,7 +117,7 @@ $(document).ready(function () {
 
   function loadCourses() {
     return $.ajax({
-      url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app/courses/teacher_info/all",
+      url: '${API_BASE}/courses/teacher_info/all',
       method: "GET",
       dataType: "json",
       success: function (data) {

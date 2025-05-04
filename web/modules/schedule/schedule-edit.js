@@ -20,7 +20,7 @@ $(document).ready(function () {
 
     function loadGroups() {
         return $.ajax({
-            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/groups/info",
+            url: "${API_BASE}/groups/info",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         }).then(data => {
@@ -32,7 +32,7 @@ $(document).ready(function () {
 
     function loadScheduleList() {
         return $.ajax({
-            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/schedules",
+            url: "${API_BASE}/schedules",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         }).then(schedules => {
@@ -146,7 +146,7 @@ $(document).ready(function () {
     $(document).on('click', '#confirmDeleteBtn', function() {
         if (!scheduleToDelete) return;
         $.ajax({
-            url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/schedules/${scheduleToDelete}`,
+            url: `${API_BASE}/schedules/${scheduleToDelete}`,
             method: 'DELETE',
             headers: { "Authorization": `Bearer ${token}` },
             success: function() {
@@ -220,7 +220,7 @@ $(document).ready(function () {
                 group_id: parseInt($('#groupId').val(),10)
             };
             $.ajax({
-                url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/schedules/${schedule.schedule_id}`,
+                url: `${API_BASE}/schedules/${schedule.schedule_id}`,
                 method: 'PUT',
                 headers: { "Authorization": `Bearer ${token}` },
                 contentType: 'application/json',

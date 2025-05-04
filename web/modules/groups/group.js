@@ -11,7 +11,7 @@ $(document).ready(function() {
     // Функция для загрузки информации о группах
     function loadGroups() {
         $.ajax({
-            url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/groups/info",
+            url: "${API_BASE}/groups/info",
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function(groups) {

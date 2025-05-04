@@ -10,7 +10,7 @@ $(document).ready(function () {
 
   function loadUserList() {
     $.ajax({
-      url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/users",
+      url: "${API_BASE}/users",
       method: "GET",
       headers: { "Authorization": `Bearer ${token}` },
       success: function (users) {
@@ -110,7 +110,7 @@ $(document).ready(function () {
     const userId = $(this).data("user-id");
     showConfirmModal("Вы действительно хотите удалить пользователя?", function () {
       $.ajax({
-        url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/delete-user/${userId}`,
+        url: `${API_BASE}/delete-user/${userId}`,
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` },
         success: function () {
@@ -126,7 +126,7 @@ $(document).ready(function () {
 
   function loadEditForm(userId) {
     $.ajax({
-      url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/users-edit/${userId}`,
+      url: `${API_BASE}/users-edit/${userId}`,
       method: "GET",
       headers: { "Authorization": `Bearer ${token}` },
       success: function (user) {
@@ -202,7 +202,7 @@ $(document).ready(function () {
         formData.password = password;
       }
       $.ajax({
-        url: `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/users-edit/${user.user_id}`,
+        url: `${API_BASE}/users-edit/${user.user_id}`,
         type: "PUT",
         headers: { "Authorization": `Bearer ${token}` },
         data: JSON.stringify(formData),

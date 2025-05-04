@@ -1,7 +1,7 @@
 $(document).ready(function () {
     // Базовый путь для всех ресурсов
     const BASE_PATH = 'web/';
-
+    const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
     // Объект для отслеживания загруженных скриптов
     const loadedScripts = {};
 

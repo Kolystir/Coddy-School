@@ -6,14 +6,14 @@ $(document).ready(function() {
     }
 
     const API = {
-        groupsInfo:    'http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/groups/info',
-        teachers:      'http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/teachers',
-        students:      'http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/filtered-users?role=Ученик',
-        createGroup:   'http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/groups',
-        updateGroup:   id => `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/groups/${id}`,
-        deleteGroup:   id => `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/groups/${id}`,
-        courses:       'http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/courses',
-        courseInfo:    id => `http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/courses/${id}`
+        groupsInfo:    '${API_BASE}/groups/info',
+        teachers:      '${API_BASE}/teachers',
+        students:      '${API_BASE}/filtered-users?role=Ученик',
+        createGroup:   '${API_BASE}/groups',
+        updateGroup:   id => `${API_BASE}/groups/${id}`,
+        deleteGroup:   id => `${API_BASE}/groups/${id}`,
+        courses:       '${API_BASE}/courses',
+        courseInfo:    id => `${API_BASE}/courses/${id}`
     };
 
     let allGroups = [];

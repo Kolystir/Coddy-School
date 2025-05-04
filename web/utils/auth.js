@@ -40,7 +40,7 @@ $(document).ready(function () {
     const password = $("#password").val();
 
     $.ajax({
-      url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/token",
+      url: "${API_BASE}/token",
       type: "POST",
       data: { username, password },
       success: function (response) {
