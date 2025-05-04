@@ -5,8 +5,11 @@ from app.api.routes import router
 app = FastAPI()
 # Разрешенные источники
 origins = [
+    "https://kolystir.github.io",
+    "https://kolystir.github.io/Coddy-School",
     "https://kolystir.github.io/Coddy-School/",
 ]
+
 
 app.add_middleware(
     CORSMiddleware,

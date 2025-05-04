@@ -53,7 +53,7 @@ $(document).ready(function () {
 
   function loadTeachers() {
     return $.ajax({
-      url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/courses/teacher_info/all",
+      url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app/courses/teacher_info/all",
       method: "GET",
       dataType: "json",
       success: function (data) {
@@ -116,7 +116,7 @@ $(document).ready(function () {
 
   function loadCourses() {
     return $.ajax({
-      url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app:8000/courses/teacher_info/all",
+      url: "http://mature-nissy-kolystir-dbf3058a.koyeb.app/courses/teacher_info/all",
       method: "GET",
       dataType: "json",
       success: function (data) {
