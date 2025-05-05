@@ -1,4 +1,5 @@
 $(document).ready(function () {
+  const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
   var token = localStorage.getItem("token");
   if (!token) {
     alert("Вы не авторизованы. Пожалуйста, войдите в систему.");

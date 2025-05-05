@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
     const token = localStorage.getItem('token');
     if (!token) {
         window.location.href = '/login';

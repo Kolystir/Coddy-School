@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
     const userId = parseInt(localStorage.getItem("userId"), 10);

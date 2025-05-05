@@ -1,4 +1,5 @@
 $(document).ready(function () {
+  const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
     // 1) Вставляем HTML модалки
     const settingsModalHtml = `
       <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
