@@ -12,7 +12,7 @@ $(document).ready(function () {
                 <button type="button" class="btn-coddy">Посмотреть курсы</button>
             </div>
             <div class="col">
-                <img src="/web/img/hero.png" class="CoddyHero">
+                <img src="https://kolystir.github.io/Coddy-School/web/img/hero.png" class="CoddyHero">
             </div>
         </div>
     </div>
