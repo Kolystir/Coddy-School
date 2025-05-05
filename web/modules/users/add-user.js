@@ -140,7 +140,7 @@ $(document).ready(function () {
         e.preventDefault();
         const data = { first_name: $('#firstName').val(), last_name: $('#lastName').val(), middle_name: $('#middleName').val(), username: $('#username').val(), password: $('#password').val(), role: $('#role').val() };
         $.ajax({
-            url: "${API_BASE}/create-user",
+            url: `${API_BASE}/create-user`,
             type: "POST",
             contentType: "application/json",
             headers: { "Authorization": `Bearer ${token}` },

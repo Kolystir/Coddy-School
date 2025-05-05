@@ -12,7 +12,7 @@ $(document).ready(function () {
 
   function loadCourseList() {
     $.ajax({
-      url: "${API_BASE}/courses-page",
+      url: `${API_BASE}/courses-page`,
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
       success(courses) {
@@ -111,7 +111,7 @@ $(document).ready(function () {
 
   function loadTeacherOptions() {
     $.ajax({
-      url: "${API_BASE}/teachers",
+      url: `${API_BASE}/teachers`,
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
       success(teachers) {
@@ -179,7 +179,7 @@ $(document).ready(function () {
       headers: { Authorization: `Bearer ${token}` },
       success(course) {
         $.ajax({
-          url: "${API_BASE}/teachers",
+          url: `${API_BASE}/teachers`,
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
           success(teachers) {

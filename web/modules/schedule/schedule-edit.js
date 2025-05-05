@@ -20,7 +20,7 @@ $(document).ready(function () {
 
     function loadGroups() {
         return $.ajax({
-            url: "${API_BASE}/groups/info",
+            url: `${API_BASE}/groups/info`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         }).then(data => {
@@ -32,7 +32,7 @@ $(document).ready(function () {
 
     function loadScheduleList() {
         return $.ajax({
-            url: "${API_BASE}/schedules",
+            url: `${API_BASE}/schedules`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         }).then(schedules => {

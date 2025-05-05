@@ -8,7 +8,7 @@ $(document).ready(function () {
 
     function loadTeachers() {
         $.ajax({
-            url: "${API_BASE}/teachers",
+            url: `${API_BASE}/teachers`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function (response) {
@@ -76,7 +76,7 @@ $(document).ready(function () {
         };
 
         $.ajax({
-            url: "${API_BASE}/create-course",
+            url: `${API_BASE}/create-course`,
             type: "POST",
             headers: { "Authorization": `Bearer ${token}` },
             data: JSON.stringify(formData),
@@ -106,7 +106,7 @@ $(document).ready(function () {
 
     function loadCourses() {
         $.ajax({
-            url: "${API_BASE}/courses-page",
+            url: `${API_BASE}/courses-page`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function (response) {

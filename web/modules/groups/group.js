@@ -11,7 +11,7 @@ $(document).ready(function() {
     // Функция для загрузки информации о группах
     function loadGroups() {
         $.ajax({
-            url: "${API_BASE}/groups/info",
+            url: `${API_BASE}/groups/info`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function(groups) {

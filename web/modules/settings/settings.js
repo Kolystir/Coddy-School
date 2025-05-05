@@ -94,7 +94,7 @@ $(document).ready(function () {
       if (pw) payload.password = pw;
   
       $.ajax({
-        url: "${API_BASE}/users/me",
+        url: `${API_BASE}/users/me`,
         method: "PUT",
         contentType: "application/json",
         headers: { "Authorization": `Bearer ${token}` },

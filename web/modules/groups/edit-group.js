@@ -6,13 +6,13 @@ $(document).ready(function() {
     }
 
     const API = {
-        groupsInfo:    '${API_BASE}/groups/info',
-        teachers:      '${API_BASE}/teachers',
-        students:      '${API_BASE}/filtered-users?role=Ученик',
-        createGroup:   '${API_BASE}/groups',
+        groupsInfo:    `${API_BASE}/groups/info`,
+        teachers:      `${API_BASE}/teachers`,
+        students:      `${API_BASE}/filtered-users?role=Ученик`,
+        createGroup:   `${API_BASE}/groups`,
         updateGroup:   id => `${API_BASE}/groups/${id}`,
         deleteGroup:   id => `${API_BASE}/groups/${id}`,
-        courses:       '${API_BASE}/courses',
+        courses:       `${API_BASE}/courses`,
         courseInfo:    id => `${API_BASE}/courses/${id}`
     };
 

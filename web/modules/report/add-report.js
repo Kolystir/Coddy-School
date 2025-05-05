@@ -42,12 +42,12 @@ $(document).ready(function () {
 
     function loadSchedules() {
         $.ajax({
-            url: "${API_BASE}/schedules",
+            url: `${API_BASE}/schedules`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function (schedulesData) {
                 $.ajax({
-                    url: "${API_BASE}/reports",
+                    url: `${API_BASE}/reports`,
                     method: "GET",
                     headers: { "Authorization": `Bearer ${token}` }
                 }).done(function (reportsData) {
@@ -98,7 +98,7 @@ $(document).ready(function () {
                 description: $('#reportDescription').val()
             };
             $.ajax({
-                url: "${API_BASE}/reports",
+                url: `${API_BASE}/reports`,
                 method: "POST",
                 headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
                 data: JSON.stringify(payload),
@@ -119,7 +119,7 @@ $(document).ready(function () {
     renderAddReportForm();
     if (role === 'Преподаватель') {
         $.ajax({
-            url: "${API_BASE}/groups/info",
+            url: `${API_BASE}/groups/info`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         }).done(function (groups) {

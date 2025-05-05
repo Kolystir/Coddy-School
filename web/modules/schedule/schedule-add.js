@@ -14,7 +14,7 @@ $(document).ready(function() {
 
     function loadGroups() {
         return $.ajax({
-            url: "${API_BASE}/groups/info",
+            url: `${API_BASE}/groups/info`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         });
@@ -22,7 +22,7 @@ $(document).ready(function() {
 
     function loadSchedules() {
         return $.ajax({
-            url: "${API_BASE}/schedules",
+            url: `${API_BASE}/schedules`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` }
         });
@@ -118,7 +118,7 @@ $(document).ready(function() {
                 group_id: parseInt($('#groupSelect').val(), 10)
             };
             $.ajax({
-                url: "${API_BASE}/schedules",
+                url: `${API_BASE}/schedules`,
                 method: "POST",
                 headers: { "Authorization": `Bearer ${token}` },
                 data: JSON.stringify(payload),

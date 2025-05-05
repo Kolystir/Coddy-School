@@ -21,7 +21,7 @@ $(document).ready(function () {
     // Загрузка расписаний
     function loadSchedules() {
         return $.ajax({
-            url: "${API_BASE}/schedules",
+            url: `${API_BASE}/schedules`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function(data) {
@@ -39,7 +39,7 @@ $(document).ready(function () {
     function loadGroups() {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: "${API_BASE}/groups/info",
+                url: `${API_BASE}/groups/info`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },
                 success: function(data) {
@@ -73,7 +73,7 @@ $(document).ready(function () {
     // Загрузка отчётов
     function loadReports() {
         return $.ajax({
-            url: "${API_BASE}/reports",
+            url: `${API_BASE}/reports`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function(reports) {

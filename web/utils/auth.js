@@ -40,7 +40,7 @@ $(document).ready(function () {
     const password = $("#password").val();
 
     $.ajax({
-      url: "${API_BASE}/token",
+      url: `${API_BASE}/token`,
       type: "POST",
       data: { username, password },
       success: function (response) {

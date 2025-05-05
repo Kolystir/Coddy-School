@@ -10,7 +10,7 @@ $(document).ready(function () {
 
   function loadUserList() {
     $.ajax({
-      url: "${API_BASE}/users",
+      url: `${API_BASE}/users`,
       method: "GET",
       headers: { "Authorization": `Bearer ${token}` },
       success: function (users) {

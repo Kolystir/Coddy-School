@@ -20,7 +20,7 @@ $(document).ready(function () {
 
     function loadSchedules() {
         return $.ajax({
-            url: "${API_BASE}/schedules",
+            url: `${API_BASE}/schedules`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function(data) {
@@ -36,7 +36,7 @@ $(document).ready(function () {
     function loadGroups() {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: "${API_BASE}/groups/info",
+                url: `${API_BASE}/groups/info`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },
                 success: function(data) {
@@ -69,7 +69,7 @@ $(document).ready(function () {
 
     function loadHomeworks() {
         $.ajax({
-            url: "${API_BASE}/homeworks",
+            url: `${API_BASE}/homeworks`,
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
             success: function(homeworks) {
