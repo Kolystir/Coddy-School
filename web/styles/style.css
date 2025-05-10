@@ -361,10 +361,7 @@ nav {
   .footer ul li {
     margin-bottom: 0.6rem;
   }
-  /* Убираем ▼ у .dropdown-toggle в навбаре */
-.navbar .dropdown-toggle::after {
-    display: none;
-  }
+
   
   /* Можно чуть подвинуть иконку, если нужно */
   .navbar .fa-user-circle {
@@ -444,4 +441,10 @@ nav {
     background-color: #6b00e6;
     color: #fff;
     font-weight: bold;
+}
+
+
+.roledrow {
+ font-size: .775em;
+ color: #ffbb08;
 }
