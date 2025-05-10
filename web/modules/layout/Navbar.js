@@ -2,6 +2,10 @@ $(document).ready(function () {
   function updateNavbar() {
     const role = localStorage.getItem("role");
     const token = localStorage.getItem("token");
+    const lastName   = localStorage.getItem("lastName");
+    const firstName  = localStorage.getItem("firstName");
+    const middleName = localStorage.getItem("middleName");
+
 
     const navStart = `
       <nav class="py-3 navbar navbar-expand-lg fixed-top auto-hiding-navbar navbar-light">
@@ -100,11 +104,14 @@ $(document).ready(function () {
       // В конце — иконка пользователя с выпадающим меню
       itemsHtml += `
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="" id="userDropdown" role="button"
-            data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fas fa-user-circle"></i>
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
+            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user-circle me-2"></i>
+            <div class="d-flex flex-column text-start">
+              <span>${lastName} ${firstName.charAt(0)}.${middleName ? middleName.charAt(0) + '.' : ''}</span>
+              <small class="text-muted">${role}</small>
+            </div>
           </a>
-
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
             <li><a class="dropdown-item" href="" id="user-settings">Настройки</a></li>
             <li><a class="dropdown-item" href="" id="logoutButton">Выйти</a></li>
