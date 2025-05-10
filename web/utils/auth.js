@@ -1,5 +1,4 @@
 $(document).ready(function () {
-  const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
   const authModalHtml = `
     <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -41,13 +40,16 @@ $(document).ready(function () {
     const password = $("#password").val();
 
     $.ajax({
-      url: `${API_BASE}/token`,
+      url: "http://localhost:8000/token",
       type: "POST",
       data: { username, password },
       success: function (response) {
         localStorage.setItem("token", response.access_token);
         localStorage.setItem("role", response.role);
         localStorage.setItem("userId", response.userId);
+        localStorage.setItem("lastname", response.lastname);
+        localStorage.setItem("firstname", response.firstname);
+        localStorage.setItem("middlename", response.middlename);
         $("#authModal").modal("hide");
         location.reload();
       },
