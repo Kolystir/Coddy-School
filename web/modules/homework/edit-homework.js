@@ -1,11 +1,8 @@
-function _init() {    
+function _init() {
     $(document).ready(function () {
         const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
         const token = localStorage.getItem("token");
-        if (!token) {
-            window.location.href = '/login';
-            return;
-        }
+        if (!token) return window.location.href = '/login';
 
         const userId = parseInt(localStorage.getItem("userId"));
         const role = localStorage.getItem("role");
@@ -14,22 +11,18 @@ function _init() {
         let editingHomeworkId = null;
         let allHomeworks = [];
         let groups = {};
+        let homeworkToDeleteId = null;
 
         loadSchedules()
-            .then(() => loadGroups())
-            .then(() => loadHomeworks());
+            .then(loadGroups)
+            .then(loadHomeworks);
 
         function loadSchedules() {
             return $.ajax({
                 url: `${API_BASE}/schedules`,
-                method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },
-                success: function(data) {
-                    data.forEach(s => schedulesMap[s.schedule_id] = s);
-                },
-                error: function() {
-                    showMessage('Ошибка при загрузке расписаний', 'danger');
-                }
+                success: data => data.forEach(s => schedulesMap[s.schedule_id] = s),
+                error: () => showMessage('Ошибка при загрузке расписаний', 'danger')
             });
         }
 
@@ -37,27 +30,24 @@ function _init() {
             return new Promise((resolve, reject) => {
                 $.ajax({
                     url: `${API_BASE}/groups/info`,
-                    method: "GET",
                     headers: { "Authorization": `Bearer ${token}` },
-                    success: function(data) {
-                        let filtered = data;
+                    success(data) {
                         if (role === "Преподаватель") {
-                            filtered = data.filter(g => g.teacher?.user_id === userId);
+                            data = data.filter(g => g.teacher?.user_id === userId);
                         }
-                        groups = filtered.reduce((acc, g) => {
+                        groups = data.reduce((acc, g) => {
                             acc[g.group_id] = g.group_name;
                             return acc;
                         }, {});
                         resolve();
                     },
-                    error: function() {
+                    error: () => {
                         showMessage('Ошибка при загрузке групп', 'danger');
                         reject();
                     }
                 });
             });
         }
-
 
         function fillGroupFilter() {
             const $sel = $('#groupFilter');
@@ -70,11 +60,10 @@ function _init() {
         function loadHomeworks() {
             $.ajax({
                 url: `${API_BASE}/homeworks`,
-                method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },
-                success: function(homeworks) {
+                success(homeworks) {
                     if (role === "Преподаватель") {
-                        const myGroupIds = Object.keys(groups).map(id => parseInt(id));
+                        const myGroupIds = Object.keys(groups).map(Number);
                         allHomeworks = homeworks.filter(hw => {
                             const sched = schedulesMap[hw.schedule_id];
                             return sched && myGroupIds.includes(sched.group.group_id);
@@ -83,30 +72,23 @@ function _init() {
                         allHomeworks = homeworks;
                     }
                     renderHomeworkList(allHomeworks);
+                    bindEvents();
                 },
-                error: function() {
-                    showMessage('Ошибка при загрузке домашних заданий', 'danger');
-                }
+                error: () => showMessage('Ошибка при загрузке домашних заданий', 'danger')
             });
         }
 
         function getDaysAgoString(diff) {
             if (diff === 0) return 'сегодня';
-            const absDiff = Math.abs(diff);
-
-            const rem10 = absDiff % 10;
-            const rem100 = absDiff % 100;
-            let suffix = 'дней';
-
-            if (rem10 === 1 && rem100 !== 11) {
-                suffix = 'день';
-            } else if (rem10 >= 2 && rem10 <= 4 && !(rem100 >= 12 && rem100 <= 14)) {
-                suffix = 'дня';
-            }
-
-            return diff > 0 ? `через ${absDiff} ${suffix}` : `${absDiff} ${suffix} назад`;
+            const abs = Math.abs(diff), r10 = abs % 10, r100 = abs % 100;
+            const suf = (r10 === 1 && r100 !== 11) ? 'день' :
+                        (r10 >= 2 && r10 <= 4 && !(r100 >= 12 && r100 <= 14)) ? 'дня' : 'дней';
+            return diff > 0 ? `через ${abs} ${suf}` : `${abs} ${suf} назад`;
         }
 
+        function formatDate(str) {
+            return new Date(str).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
 
         function renderHomeworkList(homeworks) {
             const html = `
@@ -127,17 +109,18 @@ function _init() {
                         <button id="resetFilter" class="btn btn-secondary">Показать все</button>
                     </div>
                     <ul class="list-group" id="homeworkList"></ul>
-                    <!-- Модалки редактирования/удаления -->
-                    <div class="modal fade" id="editHomeworkModal" tabindex="-1" aria-labelledby="editHomeworkModalLabel" aria-hidden="true">
+
+                    <!-- Модалки -->
+                    <div class="modal fade" id="editHomeworkModal" tabindex="-1">
                         <div class="modal-dialog"><div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="editHomeworkModalLabel">Редактировать домашнее задание</h5>
+                                <h5 class="modal-title">Редактировать домашнее задание</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
                                 <form id="editHomeworkForm">
                                     <div class="mb-3">
-                                        <label for="homeworkDescription" class="form-label">Описание</label>
+                                        <label class="form-label">Описание</label>
                                         <textarea class="form-control" id="homeworkDescription" rows="4" required></textarea>
                                     </div>
                                     <button type="submit" class="btn btn-coddy w-100">Сохранить изменения</button>
@@ -145,6 +128,7 @@ function _init() {
                             </div>
                         </div></div>
                     </div>
+
                     <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
                         <div class="modal-dialog"><div class="modal-content">
                             <div class="modal-header">
@@ -157,37 +141,25 @@ function _init() {
                             </div>
                         </div></div>
                     </div>
-                </div>
-            `;
+                </div>`;
             $("#app").html(html);
             fillGroupFilter();
             renderHomeworkItems(homeworks);
         }
 
-        function formatDate(dateStr) {
-            const options = { day: 'numeric', month: 'long', year: 'numeric' };
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('ru-RU', options);
-        }
-
-
-
-
         function renderHomeworkItems(homeworks) {
             const today = new Date();
-            const upcoming = [], past = [];
-            homeworks.forEach(hw => {
-                const sched = schedulesMap[hw.schedule_id];
-                if (!sched) return;
-                const hwDate = new Date(sched.date);
-                (hwDate >= today ? upcoming : past).push(hw);
+            const sorted = [...homeworks].sort((a, b) => {
+                const da = new Date(schedulesMap[a.schedule_id]?.date || 0);
+                const db = new Date(schedulesMap[b.schedule_id]?.date || 0);
+                return db - da;
             });
-            const sorted = [...upcoming, ...past];
+
             const items = sorted.map(hw => {
                 const sched = schedulesMap[hw.schedule_id] || {};
                 const group = sched.group || {};
-                const diffDays = Math.floor((new Date() - new Date(sched.date)) / (1000 * 60 * 60 * 24));
-                const ago = getDaysAgoString(diffDays);
+                const diff = Math.floor((new Date() - new Date(sched.date)) / (1000 * 60 * 60 * 24));
+                const ago = getDaysAgoString(diff);
                 return `
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
@@ -196,53 +168,110 @@ function _init() {
                             <div><strong>ДЗ:</strong> ${hw.description || 'Без описания'}</div>
                         </div>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-coddy rounded-circle p-2 d-flex align-items-center justify-content-center editHomework" 
-                                    data-id="${hw.homework_id}" 
-                                    data-description="${hw.description || ''}" 
-                                    style="width: 40px; height: 40px;">
-                                <i class="bi bi-pencil" style="font-size: 1.2rem;"></i>
+                            <button class="btn btn-coddy rounded-circle editHomework" data-id="${hw.homework_id}" data-description="${hw.description || ''}">
+                                <i class="bi bi-pencil"></i>
                             </button>
-                            <button class="btn btn-danger rounded-circle p-2 d-flex align-items-center justify-content-center deleteHomework" 
-                                    data-id="${hw.homework_id}" 
-                                    style="width: 40px; height: 40px;">
-                                <i class="bi bi-trash" style="font-size: 1.2rem;"></i>
+                            <button class="btn btn-danger rounded-circle deleteHomework" data-id="${hw.homework_id}">
+                                <i class="bi bi-trash"></i>
                             </button>
-
                         </div>
                     </li>`;
             }).join('');
             $("#homeworkList").html(items);
         }
 
-        let homeworkToDeleteId = null;
-        $(document).on('click', '.deleteHomework', function() {
-            homeworkToDeleteId = $(this).data('id');
-            new bootstrap.Modal($('#deleteConfirmModal')).show();
-        });
-        $(document).on('click', '#confirmDeleteBtn', function() {
-            if (!homeworkToDeleteId) return;
-            $.ajax({ url: `${API_BASE}/homeworks/${homeworkToDeleteId}`, method: 'DELETE', headers: { "Authorization": `Bearer ${token}` }, success: function() { showMessage('Домашнее задание удалено','success'); loadHomeworks(); }, error: function() { showMessage('Ошибка при удалении','danger'); }, complete: function() { bootstrap.Modal.getInstance($('#deleteConfirmModal')).hide(); }});
-        });
-        $(document).on('click', '.editHomework', function() { editingHomeworkId = $(this).data('id'); $('#homeworkDescription').val($(this).data('description')); new bootstrap.Modal($('#editHomeworkModal')).show(); });
-        $(document).on('submit', '#editHomeworkForm', function(e) {
-            e.preventDefault(); const newDesc = $('#homeworkDescription').val(); if (!editingHomeworkId) return;
-            $.ajax({ url: `${API_BASE}/homeworks/${editingHomeworkId}`, method: 'PUT', headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }, data: JSON.stringify({ description: newDesc }), success: function() { showMessage('Домашнее задание обновлено','success'); bootstrap.Modal.getInstance($('#editHomeworkModal')).hide(); loadHomeworks(); }, error: function() { showMessage('Ошибка при обновлении','danger'); }});
-        });
-        $(document).on('change', '#dateFilter, #groupFilter', function() {
-            const date = $('#dateFilter').val(); const grp = $('#groupFilter').val();
-            const filtered = allHomeworks.filter(hw => {
-                const sched = schedulesMap[hw.schedule_id]; if (!sched) return false;
-                const matchDate = date ? sched.date === date : true;
-                const matchGroup = grp ? String(sched.group.group_id) === grp : true;
-                return matchDate && matchGroup;
-            }); renderHomeworkItems(filtered);
-        });
-        $(document).on('click', '#resetFilter', function() { $('#dateFilter').val(''); $('#groupFilter').val(''); renderHomeworkItems(allHomeworks); });
+        function bindEvents() {
+            const $doc = $(document);
+            $doc
+                .off('click', '.deleteHomework')
+                .off('click', '#confirmDeleteBtn')
+                .off('click', '.editHomework')
+                .off('submit', '#editHomeworkForm')
+                .off('change', '#dateFilter, #groupFilter')
+                .off('click', '#resetFilter')
+
+                .on('click', '.deleteHomework', function () {
+                    homeworkToDeleteId = $(this).data('id');
+                    new bootstrap.Modal($('#deleteConfirmModal')).show();
+                })
+
+                .on('click', '#confirmDeleteBtn', function () {
+                    if (!homeworkToDeleteId) return;
+                    $.ajax({
+                        url: `${API_BASE}/homeworks/${homeworkToDeleteId}`,
+                        method: 'DELETE',
+                        headers: { "Authorization": `Bearer ${token}` },
+                        success: () => {
+                            showMessage('Домашнее задание удалено', 'success');
+                            loadHomeworks();
+                        },
+                        error: () => showMessage('Ошибка при удалении', 'danger'),
+                        complete: () => bootstrap.Modal.getInstance($('#deleteConfirmModal')).hide()
+                    });
+                })
+
+                .on('click', '.editHomework', function () {
+                    editingHomeworkId = $(this).data('id');
+                    $('#homeworkDescription').val($(this).data('description'));
+                    new bootstrap.Modal($('#editHomeworkModal')).show();
+                })
+
+                .on('submit', '#editHomeworkForm', function (e) {
+                    e.preventDefault();
+                    const newDesc = $('#homeworkDescription').val();
+                    if (!editingHomeworkId) return;
+                    $.ajax({
+                        url: `${API_BASE}/homeworks/${editingHomeworkId}`,
+                        method: 'PUT',
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        },
+                        data: JSON.stringify({ description: newDesc }),
+                        success: () => {
+                            showMessage('Домашнее задание обновлено', 'success');
+                            bootstrap.Modal.getInstance($('#editHomeworkModal')).hide();
+                            loadHomeworks();
+                        },
+                        error: () => showMessage('Ошибка при обновлении', 'danger')
+                    });
+                })
+
+                .on('change', '#dateFilter, #groupFilter', function () {
+                    const date = $('#dateFilter').val();
+                    const groupId = $('#groupFilter').val();
+                    const filtered = allHomeworks.filter(hw => {
+                        const sched = schedulesMap[hw.schedule_id];
+                        if (!sched) return false;
+                        const matchDate = date ? sched.date === date : true;
+                        const matchGroup = groupId ? String(sched.group.group_id) === groupId : true;
+                        return matchDate && matchGroup;
+                    });
+                    renderHomeworkItems(filtered);
+                })
+
+                .on('click', '#resetFilter', function () {
+                    $('#dateFilter').val('');
+                    $('#groupFilter').val('');
+                    renderHomeworkItems(allHomeworks);
+                });
+
+            // Очистка фона модалки (если вдруг остаётся)
+            $doc
+                .off('hidden.bs.modal')
+                .on('hidden.bs.modal', '.modal', () => {
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open');
+                });
+        }
 
         function showMessage(text, type) {
             const msg = $('#homeworkMsg');
-            msg.removeClass('text-success text-danger').addClass(type==='success'?'text-success':'text-danger');
-            msg.text(text).show(); setTimeout(()=>msg.fadeOut(),5000);
+            msg.removeClass('text-success text-danger')
+               .addClass(type === 'success' ? 'text-success' : 'text-danger')
+               .text(text)
+               .show();
+            setTimeout(() => msg.fadeOut(), 5000);
         }
     });
 }

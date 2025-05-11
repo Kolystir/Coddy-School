@@ -4,6 +4,7 @@ function _init() {
         const token = localStorage.getItem("token");
         const role = localStorage.getItem("role");
         const userId = parseInt(localStorage.getItem("userId"), 10);
+
         if (!token) {
             window.location.href = '/login';
             return;
@@ -32,13 +33,16 @@ function _init() {
                     </form>
                 </div>
             `);
+
             bindReportEvents();
         }
 
         function showReportMessage(text, type) {
             const msg = $('#reportMsg');
-            msg.removeClass('text-success text-danger').addClass(type === 'success' ? 'text-success' : 'text-danger');
-            msg.text(text).show();
+            msg.removeClass('text-success text-danger')
+               .addClass(type === 'success' ? 'text-success' : 'text-danger')
+               .text(text)
+               .show();
             setTimeout(() => msg.fadeOut(), 5000);
         }
 
@@ -54,10 +58,12 @@ function _init() {
                         headers: { "Authorization": `Bearer ${token}` }
                     }).done(function (reportsData) {
                         existingReports = reportsData.map(r => r.schedule_id);
+
                         let schedules = schedulesData;
                         if (role === 'Преподаватель') {
                             schedules = schedules.filter(s => teacherGroupIds.includes(s.group.group_id));
                         }
+
                         const today = new Date();
                         const options = schedules.map(s => {
                             const lessonDate = new Date(s.date);
@@ -66,7 +72,9 @@ function _init() {
                             const groupName = s.group?.group_name || '-';
                             const isReported = existingReports.includes(s.schedule_id);
                             const formattedDate = lessonDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-                            return `<option value="${s.schedule_id}" ${isReported ? 'disabled' : ''} style="background-color: ${isReported ? '#d4edda' : '#f8d7da'};">
+
+                            return `<option value="${s.schedule_id}" ${isReported ? 'disabled' : ''} 
+                                style="background-color: ${isReported ? '#d4edda' : '#f8d7da'};">
                                 ${formattedDate} (${ago}) / ${groupName}${isReported ? ' - Отчёт добавлен' : ''}
                             </option>`;
                         }).join('');
@@ -83,7 +91,6 @@ function _init() {
         function getDaysAgoString(diff) {
             if (diff === 0) return 'сегодня';
             const absDiff = Math.abs(diff);
-
             const rem10 = absDiff % 10;
             const rem100 = absDiff % 100;
             let suffix = 'дней';
@@ -97,23 +104,28 @@ function _init() {
             return diff > 0 ? `через ${absDiff} ${suffix}` : `${absDiff} ${suffix} назад`;
         }
 
-
         function bindReportEvents() {
-            $('#app').on('submit', '#addReportForm', function (e) {
+            $('#app').off('submit', '#addReportForm').on('submit', '#addReportForm', function (e) {
                 e.preventDefault();
+
                 const scheduleId = parseInt($('#scheduleSelect').val(), 10);
                 if (existingReports.includes(scheduleId)) {
                     showReportMessage('Отчёт по этому занятию уже добавлен', 'danger');
                     return;
                 }
+
                 const payload = {
                     schedule_id: scheduleId,
                     description: $('#reportDescription').val()
                 };
+
                 $.ajax({
                     url: `${API_BASE}/reports`,
                     method: "POST",
-                    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
                     data: JSON.stringify(payload),
                     success: function () {
                         showReportMessage('Отчёт успешно добавлен', 'success');
@@ -129,14 +141,18 @@ function _init() {
             });
         }
 
+        // Основной запуск
         renderAddReportForm();
+
         if (role === 'Преподаватель') {
             $.ajax({
                 url: `${API_BASE}/groups/info`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` }
             }).done(function (groups) {
-                teacherGroupIds = groups.filter(g => g.teacher && g.teacher.user_id === userId).map(g => g.group_id);
+                teacherGroupIds = groups
+                    .filter(g => g.teacher && g.teacher.user_id === userId)
+                    .map(g => g.group_id);
             }).always(function () {
                 loadSchedules();
             });

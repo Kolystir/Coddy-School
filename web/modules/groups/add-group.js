@@ -61,10 +61,21 @@ function _init() {
         }
 
         function bindEvents() {
-            $('#app').on('change', '#courseSelect', onCourseChange);
-            $('#app').on('keyup', '#studentSearch', onStudentSearch);
-            $('#app').on('submit', '#groupForm', onFormSubmit);
-            $('#app').on('keyup', '#groupFilter', onGroupFilter);
+            $('#app')
+                .off('change', '#courseSelect')
+                .off('keyup', '#studentSearch')
+                .off('submit', '#groupForm')
+                .off('keyup', '#groupFilter')
+                .on('change', '#courseSelect', onCourseChange)
+                .on('keyup', '#studentSearch', onStudentSearch)
+                .on('submit', '#groupForm', onFormSubmit)
+                .on('keyup', '#groupFilter', onGroupFilter);
+
+            // FIX: глобально удаляем тёмный фон, если он завис
+            $(document).off('hidden.bs.modal').on('hidden.bs.modal', '.modal', () => {
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
+            });
         }
 
         function loadAll() {

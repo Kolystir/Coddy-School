@@ -1,23 +1,18 @@
-function _init() {    
-    $(document).ready(function() {
+function _init() {
+    $(document).ready(function () {
         const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
         const token = localStorage.getItem("token");
-        if (!token) {
-            window.location.href = '/login';
-            return;
-        }
+        if (!token) return window.location.href = '/login';
 
         const userId = parseInt(localStorage.getItem("userId"));
         const role = localStorage.getItem("role");
 
-        // Загрузка групп и расписаний
         let allGroups = [];
         let allSchedules = [];
 
         function loadGroups() {
             return $.ajax({
                 url: `${API_BASE}/groups/info`,
-                method: "GET",
                 headers: { "Authorization": `Bearer ${token}` }
             });
         }
@@ -25,21 +20,18 @@ function _init() {
         function loadSchedules() {
             return $.ajax({
                 url: `${API_BASE}/schedules`,
-                method: "GET",
                 headers: { "Authorization": `Bearer ${token}` }
             });
         }
 
-        // Отрисовка интерфейса
         function renderInterface(groups) {
-            // фильтрация групп по роли
-            let filtered = groups;
-            if (role === "Преподаватель") {
-                filtered = groups.filter(g => g.teacher?.user_id === userId);
-            }
+            const filtered = role === "Преподаватель"
+                ? groups.filter(g => g.teacher?.user_id === userId)
+                : groups;
 
             allGroups = filtered;
             const options = filtered.map(g => `<option value="${g.group_id}">${g.group_name}</option>`).join('');
+
             $('#app').html(`
                 <div class="container mt-5 pt-5">
                     <h2 class="text-center mb-4 mainh1">Управление расписанием</h2>
@@ -96,22 +88,19 @@ function _init() {
             refreshSchedules();
         }
 
-        // Биндинг событий
         function bindEvents() {
-            // Авто-заполнение времени окончания +2 часа
-            $(document).off('input', '#startTime').on('input', '#startTime', function() {
+            const $doc = $(document);
+
+            $doc.off('input', '#startTime').on('input', '#startTime', function () {
                 const start = $(this).val();
                 if (!start) return;
                 const [h, m] = start.split(':').map(Number);
-                let endH = h + 2;
-                if (endH >= 24) endH -= 24;
-                const hh = String(endH).padStart(2, '0');
+                const hh = String((h + 2) % 24).padStart(2, '0');
                 const mm = String(m).padStart(2, '0');
                 $('#endTime').val(`${hh}:${mm}`);
             });
 
-            // Добавление расписания
-            $("#addScheduleForm").off('submit').on('submit', function(e) {
+            $doc.off('submit', '#addScheduleForm').on('submit', '#addScheduleForm', function (e) {
                 e.preventDefault();
                 const payload = {
                     date: $('#scheduleDate').val(),
@@ -125,36 +114,34 @@ function _init() {
                     headers: { "Authorization": `Bearer ${token}` },
                     data: JSON.stringify(payload),
                     contentType: "application/json",
-                    success: function() {
+                    success: () => {
                         showMessage('Расписание успешно создано', 'success');
                         $('#addScheduleForm')[0].reset();
                         refreshSchedules();
                     },
-                    error: function(xhr) {
+                    error: (xhr) => {
                         const text = xhr.responseJSON?.detail || xhr.responseText || 'Ошибка при создании расписания';
                         showMessage(text, 'danger');
                     }
                 });
             });
 
-            // Фильтр расписаний по группе
-            $('#app').off('change', '#groupFilter').on('change', '#groupFilter', function() {
+            $doc.off('change', '#groupFilter').on('change', '#groupFilter', function () {
                 filterSchedules($(this).val());
             });
         }
 
-        // Показ сообщения
         function showMessage(text, type) {
             const msg = $('#scheduleMsg');
-            msg.removeClass('text-success text-danger').addClass(type === 'success' ? 'text-success' : 'text-danger');
-            msg.text(text).show();
-            setTimeout(() => { msg.fadeOut(); }, 5000);
+            msg.removeClass('text-success text-danger')
+               .addClass(type === 'success' ? 'text-success' : 'text-danger')
+               .text(text)
+               .show();
+            setTimeout(() => msg.fadeOut(), 5000);
         }
 
-        // Обновление и фильтрация расписаний
         function refreshSchedules() {
-            loadSchedules().done(function(data) {
-                // при фильрации уже используется allGroups, расписание выбираем по нему
+            loadSchedules().done(data => {
                 allSchedules = data;
                 renderSchedules(data);
             });
@@ -166,29 +153,29 @@ function _init() {
                 "июля", "августа", "сентября", "октября", "ноября", "декабря"
             ];
             const [year, month, day] = dateStr.split("-");
-            const monthName = months[parseInt(month, 10) - 1];
-            return `${parseInt(day, 10)} ${monthName} ${year}`;
+            return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
         }
-
-
 
         function renderSchedules(list) {
             const tbody = $('#schedulesTable tbody').empty();
-            if (!list.length) {
+            const relevant = role === "Преподаватель"
+                ? list.filter(item => allGroups.some(g => g.group_id === item.group.group_id))
+                : list;
+
+            if (!relevant.length) {
                 tbody.append('<tr><td colspan="4" class="text-center">Нет расписаний</td></tr>');
                 return;
             }
-            list.forEach(item => {
-                // только расписания по доступным группам
-                if (role === "Преподаватель" && !allGroups.some(g => g.group_id === item.group.group_id)) return;
-                tbody.append(
-                    `<tr>
+
+            relevant.forEach(item => {
+                tbody.append(`
+                    <tr>
                         <td>${formatRussianDate(item.date)}</td>
                         <td>${item.start_time}</td>
                         <td>${item.end_time}</td>
                         <td>${item.group.group_name}</td>
-                    </tr>`
-                );
+                    </tr>
+                `);
             });
         }
 
@@ -196,17 +183,14 @@ function _init() {
             if (!groupId) {
                 renderSchedules(allSchedules);
             } else {
-                const filtered = allSchedules.filter(s => s.group.group_id == groupId);
+                const filtered = allSchedules.filter(s => String(s.group.group_id) === groupId);
                 renderSchedules(filtered);
             }
         }
 
-        // Инициализация
-        $.when(loadGroups()).done(function(groups) {
+        $.when(loadGroups()).done(groups => {
             renderInterface(groups);
-        }).fail(function() {
-            alert('Ошибка при загрузке групп');
-        });
+        }).fail(() => alert('Ошибка при загрузке групп'));
     });
 }
 window['init_modules_schedule_schedule-add_js'] = _init;

@@ -1,11 +1,8 @@
-function _init() {    
+function _init() {
     $(document).ready(function () {
         const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
         const token = localStorage.getItem("token");
-        if (!token) {
-            window.location.href = '/login';
-            return;
-        }
+        if (!token) return window.location.href = '/login';
 
         const userId = parseInt(localStorage.getItem("userId"));
         const role = localStorage.getItem("role");
@@ -14,48 +11,37 @@ function _init() {
         let editingReportId = null;
         let allReports = [];
         let groups = {};
+        let reportToDeleteId = null;
 
-        // Сначала загружаем расписания, затем группы, затем отчёты
         loadSchedules()
-            .then(() => loadGroups())
-            .then(() => loadReports());
+            .then(loadGroups)
+            .then(loadReports);
 
-        // Загрузка расписаний
         function loadSchedules() {
             return $.ajax({
                 url: `${API_BASE}/schedules`,
-                method: "GET",
                 headers: { "Authorization": `Bearer ${token}` },
-                success: function(data) {
-                    data.forEach(s => {
-                        schedulesMap[s.schedule_id] = s;
-                    });
-                },
-                error: function() {
-                    showMessage('Ошибка при загрузке расписаний', 'danger');
-                }
+                success: data => data.forEach(s => schedulesMap[s.schedule_id] = s),
+                error: () => showMessage('Ошибка при загрузке расписаний', 'danger')
             });
         }
 
-        // Загрузка групп с фильтрацией для преподавателя / администратора
         function loadGroups() {
             return new Promise((resolve, reject) => {
                 $.ajax({
                     url: `${API_BASE}/groups/info`,
-                    method: "GET",
                     headers: { "Authorization": `Bearer ${token}` },
-                    success: function(data) {
-                        let filteredGroups = data;
+                    success(data) {
                         if (role === "Преподаватель") {
-                            filteredGroups = data.filter(g => g.teacher && g.teacher.user_id === userId);
+                            data = data.filter(g => g.teacher && g.teacher.user_id === userId);
                         }
-                        groups = filteredGroups.reduce((acc, g) => {
+                        groups = data.reduce((acc, g) => {
                             acc[g.group_id] = g.group_name;
                             return acc;
                         }, {});
                         resolve();
                     },
-                    error: function() {
+                    error: () => {
                         showMessage('Ошибка при загрузке групп', 'danger');
                         reject();
                     }
@@ -63,7 +49,39 @@ function _init() {
             });
         }
 
-        // Функция заполнения селекта группами
+        function loadReports() {
+            $.ajax({
+                url: `${API_BASE}/reports`,
+                headers: { "Authorization": `Bearer ${token}` },
+                success(reports) {
+                    if (role === "Преподаватель") {
+                        const myGroupIds = Object.keys(groups).map(Number);
+                        allReports = reports.filter(rp => {
+                            const sched = schedulesMap[rp.schedule_id];
+                            return sched && myGroupIds.includes(sched.group.group_id);
+                        });
+                    } else {
+                        allReports = reports;
+                    }
+                    renderReportList(allReports);
+                    bindEvents();
+                },
+                error: () => showMessage('Ошибка при загрузке отчётов', 'danger')
+            });
+        }
+
+        function getDaysAgoString(diff) {
+            if (diff === 0) return 'сегодня';
+            const abs = Math.abs(diff), r10 = abs % 10, r100 = abs % 100;
+            const suf = (r10 === 1 && r100 !== 11) ? 'день' :
+                        (r10 >= 2 && r10 <= 4 && !(r100 >= 12 && r100 <= 14)) ? 'дня' : 'дней';
+            return diff > 0 ? `через ${abs} ${suf}` : `${abs} ${suf} назад`;
+        }
+
+        function formatDate(str) {
+            return new Date(str).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
         function fillGroupFilter() {
             const $sel = $('#groupFilter');
             $sel.empty().append('<option value="">Все группы</option>');
@@ -71,50 +89,6 @@ function _init() {
                 $sel.append(`<option value="${id}">${name}</option>`);
             });
         }
-
-        // Загрузка отчётов
-        function loadReports() {
-            return $.ajax({
-                url: `${API_BASE}/reports`,
-                method: "GET",
-                headers: { "Authorization": `Bearer ${token}` },
-                success: function(reports) {
-                    if (role === "Преподаватель") {
-                        // Фильтруем отчёты по группам преподавателя
-                        const teacherGroupIds = Object.keys(groups).map(id => parseInt(id));
-                        allReports = reports.filter(rp => {
-                            const sched = schedulesMap[rp.schedule_id];
-                            return sched && teacherGroupIds.includes(sched.group.group_id);
-                        });
-                    } else {
-                        allReports = reports;
-                    }
-                    renderReportList(allReports);
-                },
-                error: function() {
-                    showMessage('Ошибка при загрузке отчётов', 'danger');
-                }
-            });
-        }
-
-        // Утилиты для рендера
-        function getDaysAgoString(diff) {
-            if (diff === 0) return 'сегодня';
-            const absDiff = Math.abs(diff);
-
-            const rem10 = absDiff % 10;
-            const rem100 = absDiff % 100;
-            let suffix = 'дней';
-
-            if (rem10 === 1 && rem100 !== 11) {
-                suffix = 'день';
-            } else if (rem10 >= 2 && rem10 <= 4 && !(rem100 >= 12 && rem100 <= 14)) {
-                suffix = 'дня';
-            }
-
-            return diff > 0 ? `через ${absDiff} ${suffix}` : `${absDiff} ${suffix} назад`;
-        }
-
 
         function renderReportList(reports) {
             const html = `
@@ -137,74 +111,55 @@ function _init() {
                     <ul class="list-group" id="reportList"></ul>
 
                     <!-- Модалки -->
-                    <div class="modal fade" id="editReportModal" tabindex="-1" aria-labelledby="editReportModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="editReportModalLabel">Редактировать отчёт</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="editReportForm">
-                                        <div class="mb-3">
-                                            <label for="reportDescription" class="form-label">Описание</label>
-                                            <textarea class="form-control" id="reportDescription" rows="4" required></textarea>
-                                        </div>
-                                        <button type="submit" class="btn btn-coddy w-100">Сохранить изменения</button>
-                                    </form>
-                                </div>
+                    <div class="modal fade" id="editReportModal" tabindex="-1">
+                        <div class="modal-dialog"><div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Редактировать отчёт</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
-                        </div>
+                            <div class="modal-body">
+                                <form id="editReportForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Описание</label>
+                                        <textarea class="form-control" id="reportDescription" rows="4" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-coddy w-100">Сохранить изменения</button>
+                                </form>
+                            </div>
+                        </div></div>
                     </div>
 
                     <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Подтвердите удаление</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <p>Вы уверены, что хотите удалить этот отчёт?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Удалить</button>
-                                </div>
+                        <div class="modal-dialog"><div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Подтвердите удаление</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
-                        </div>
+                            <div class="modal-body"><p>Вы уверены, что хотите удалить этот отчёт?</p></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Удалить</button>
+                            </div>
+                        </div></div>
                     </div>
-                </div>
-            `;
+                </div>`;
             $("#app").html(html);
             fillGroupFilter();
             renderReportItems(reports);
         }
 
-        function formatDate(dateStr) {
-            const options = { day: 'numeric', month: 'long', year: 'numeric' };
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('ru-RU', options);
-        }
-
-
         function renderReportItems(reports) {
             const today = new Date();
-            const upcoming = [], past = [];
-
-            reports.forEach(rp => {
-                const sched = schedulesMap[rp.schedule_id];
-                if (!sched) return;
-                const lessonDate = new Date(sched.date);
-                (lessonDate >= today ? upcoming : past).push(rp);
+            const sorted = [...reports].sort((a, b) => {
+                const da = new Date(schedulesMap[a.schedule_id]?.date || 0);
+                const db = new Date(schedulesMap[b.schedule_id]?.date || 0);
+                return db - da;
             });
 
-            const sorted = [...upcoming, ...past];
             const items = sorted.map(rp => {
                 const sched = schedulesMap[rp.schedule_id] || {};
                 const group = sched.group || {};
-                const diffDays = Math.floor((new Date() - new Date(sched.date)) / (1000 * 60 * 60 * 24));
-                const ago = getDaysAgoString(diffDays);
-
+                const diff = Math.floor((new Date() - new Date(sched.date)) / (1000 * 60 * 60 * 24));
+                const ago = getDaysAgoString(diff);
                 return `
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
@@ -213,107 +168,109 @@ function _init() {
                             <div><strong>Отчёт:</strong> ${rp.description || 'Без описания'}</div>
                         </div>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-coddy rounded-circle p-2 d-flex align-items-center justify-content-center editReport" 
-                                    data-id="${rp.report_id}" 
-                                    data-description="${rp.description || ''}" 
-                                    style="width: 40px; height: 40px;">
-                                <i class="bi bi-pencil" style="font-size: 1.2rem;"></i>
+                            <button class="btn btn-coddy rounded-circle editReport" data-id="${rp.report_id}" data-description="${rp.description || ''}">
+                                <i class="bi bi-pencil"></i>
                             </button>
-                            <button class="btn btn-danger rounded-circle p-2 d-flex align-items-center justify-content-center deleteReport" 
-                                    data-id="${rp.report_id}" 
-                                    style="width: 40px; height: 40px;">
-                                <i class="bi bi-trash" style="font-size: 1.2rem;"></i>
+                            <button class="btn btn-danger rounded-circle deleteReport" data-id="${rp.report_id}">
+                                <i class="bi bi-trash"></i>
                             </button>
                         </div>
-                    </li>
-                `;
+                    </li>`;
             }).join('');
-
             $("#reportList").html(items);
         }
 
-       let reportToDeleteId = null;
+        function bindEvents() {
+            const $doc = $(document);
+            $doc
+                .off('click', '.editReport')
+                .off('click', '.deleteReport')
+                .off('click', '#confirmDeleteBtn')
+                .off('submit', '#editReportForm')
+                .off('change', '#dateFilter, #groupFilter')
+                .off('click', '#resetFilter')
 
-        $(document).on('click', '.deleteReport', function() {
-            reportToDeleteId = $(this).data('id');
-            new bootstrap.Modal($('#deleteConfirmModal')).show();
-        });
+                .on('click', '.editReport', function () {
+                    editingReportId = $(this).data('id');
+                    $('#reportDescription').val($(this).data('description'));
+                    new bootstrap.Modal($('#editReportModal')).show();
+                })
 
-        $(document).on('click', '#confirmDeleteBtn', function() {
-            if (!reportToDeleteId) return;
-            $.ajax({
-                url: `${API_BASE}/reports/${reportToDeleteId}`,
-                method: 'DELETE',
-                headers: { "Authorization": `Bearer ${token}` },
-                success: function() {
-                    showMessage('Отчёт удалён', 'success');
-                    loadReports();
-                },
-                error: function() {
-                    showMessage('Ошибка при удалении', 'danger');
-                },
-                complete: function() {
-                    bootstrap.Modal.getInstance($('#deleteConfirmModal')).hide();
-                }
-            });
-        });
+                .on('click', '.deleteReport', function () {
+                    reportToDeleteId = $(this).data('id');
+                    new bootstrap.Modal($('#deleteConfirmModal')).show();
+                })
 
-        $(document).on('click', '.editReport', function() {
-            editingReportId = $(this).data('id');
-            $('#reportDescription').val($(this).data('description'));
-            new bootstrap.Modal($('#editReportModal')).show();
-        });
+                .on('click', '#confirmDeleteBtn', function () {
+                    if (!reportToDeleteId) return;
+                    $.ajax({
+                        url: `${API_BASE}/reports/${reportToDeleteId}`,
+                        method: 'DELETE',
+                        headers: { "Authorization": `Bearer ${token}` },
+                        success: () => {
+                            showMessage('Отчёт удалён', 'success');
+                            loadReports();
+                        },
+                        error: () => showMessage('Ошибка при удалении', 'danger'),
+                        complete: () => bootstrap.Modal.getInstance($('#deleteConfirmModal')).hide()
+                    });
+                })
 
-        $(document).on('submit', '#editReportForm', function(e) {
-            e.preventDefault();
-            const newDesc = $('#reportDescription').val();
-            if (!editingReportId) return;
-            $.ajax({
-                url: `${API_BASE}/reports/${editingReportId}`,
-                method: 'PUT',
-                headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-                data: JSON.stringify({ description: newDesc }),
-                success: function() {
-                    showMessage('Отчёт обновлён', 'success');
-                    bootstrap.Modal.getInstance($('#editReportModal')).hide();
-                    loadReports();
-                },
-                error: function() {
-                    showMessage('Ошибка при обновлении', 'danger');
-                }
-            });
-        });
+                .on('submit', '#editReportForm', function (e) {
+                    e.preventDefault();
+                    const newDesc = $('#reportDescription').val();
+                    if (!editingReportId) return;
+                    $.ajax({
+                        url: `${API_BASE}/reports/${editingReportId}`,
+                        method: 'PUT',
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        },
+                        data: JSON.stringify({ description: newDesc }),
+                        success: () => {
+                            showMessage('Отчёт обновлён', 'success');
+                            bootstrap.Modal.getInstance($('#editReportModal')).hide();
+                            loadReports();
+                        },
+                        error: () => showMessage('Ошибка при обновлении', 'danger')
+                    });
+                })
 
-        $(document).on('change', '#dateFilter, #groupFilter', function () {
-            const date = $('#dateFilter').val();
-            const grp = $('#groupFilter').val();
-            const filtered = allReports.filter(rp => {
-                const sched = schedulesMap[rp.schedule_id];
-                if (!sched) return false;
-                const matchDate = date ? sched.date === date : true;
-                const matchGroup = grp ? String(sched.group.group_id) === grp : true;
-                return matchDate && matchGroup;
-            });
-            renderReportItems(filtered);
-        });
+                .on('change', '#dateFilter, #groupFilter', function () {
+                    const date = $('#dateFilter').val();
+                    const groupId = $('#groupFilter').val();
+                    const filtered = allReports.filter(rp => {
+                        const sched = schedulesMap[rp.schedule_id];
+                        if (!sched) return false;
+                        const matchDate = date ? sched.date === date : true;
+                        const matchGroup = groupId ? String(sched.group.group_id) === groupId : true;
+                        return matchDate && matchGroup;
+                    });
+                    renderReportItems(filtered);
+                })
 
-        $(document).on('click', '#resetFilter', function() {
-            $('#dateFilter').val('');
-            $('#groupFilter').val('');
-            renderReportItems(allReports);
-        });
+                .on('click', '#resetFilter', function () {
+                    $('#dateFilter').val('');
+                    $('#groupFilter').val('');
+                    renderReportItems(allReports);
+                })
+
+                .off('hidden.bs.modal')
+                .on('hidden.bs.modal', '.modal', () => {
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open');
+                });
+        }
 
         function showMessage(text, type) {
             const msg = $('#reportMsg');
-            msg.removeClass('text-success text-danger').addClass(type === 'success' ? 'text-success' : 'text-danger');
-            msg.text(text).show();
+            msg.removeClass('text-success text-danger')
+               .addClass(type === 'success' ? 'text-success' : 'text-danger')
+               .text(text)
+               .show();
             setTimeout(() => msg.fadeOut(), 5000);
         }
     });
 }
 window['init_modules_report_edit-report_js'] = _init;
-
-
-
-
-

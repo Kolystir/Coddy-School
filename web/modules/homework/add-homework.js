@@ -4,6 +4,7 @@ function _init() {
         const token = localStorage.getItem("token");
         const role = localStorage.getItem("role");
         const userId = parseInt(localStorage.getItem("userId"), 10);
+
         if (!token) {
             window.location.href = '/login';
             return;
@@ -32,13 +33,16 @@ function _init() {
                     </form>
                 </div>
             `);
+
             bindHomeworkEvents();
         }
 
         function showHomeworkMessage(text, type) {
             const msg = $('#homeworkMsg');
-            msg.removeClass('text-success text-danger').addClass(type === 'success' ? 'text-success' : 'text-danger');
-            msg.text(text).show();
+            msg.removeClass('text-success text-danger')
+               .addClass(type === 'success' ? 'text-success' : 'text-danger')
+               .text(text)
+               .show();
             setTimeout(() => msg.fadeOut(), 5000);
         }
 
@@ -54,10 +58,12 @@ function _init() {
                         headers: { "Authorization": `Bearer ${token}` }
                     }).done(function (homeworksData) {
                         existingHomeworks = homeworksData.map(h => h.schedule_id);
+
                         let schedules = schedulesData;
                         if (role === 'Преподаватель') {
                             schedules = schedules.filter(s => teacherGroupIds.includes(s.group.group_id));
                         }
+
                         const today = new Date();
                         const options = schedules.map(s => {
                             const lessonDate = new Date(s.date);
@@ -66,6 +72,7 @@ function _init() {
                             const groupName = s.group?.group_name || '-';
                             const isHomeworkSet = existingHomeworks.includes(s.schedule_id);
                             const formattedDate = lessonDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+
                             return `<option value="${s.schedule_id}" ${isHomeworkSet ? 'disabled' : ''} style="background-color: ${isHomeworkSet ? '#d4edda' : '#f8d7da'};">
                                 ${formattedDate} (${ago}) / ${groupName}${isHomeworkSet ? ' - ДЗ добавлено' : ''}
                             </option>`;
@@ -83,7 +90,6 @@ function _init() {
         function getDaysAgoString(diff) {
             if (diff === 0) return 'сегодня';
             const absDiff = Math.abs(diff);
-
             const rem10 = absDiff % 10;
             const rem100 = absDiff % 100;
             let suffix = 'дней';
@@ -97,23 +103,29 @@ function _init() {
             return diff > 0 ? `через ${absDiff} ${suffix}` : `${absDiff} ${suffix} назад`;
         }
 
-
         function bindHomeworkEvents() {
-            $('#app').on('submit', '#addHomeworkForm', function (e) {
+            // Сначала снимаем старый обработчик, затем вешаем заново
+            $('#app').off('submit', '#addHomeworkForm').on('submit', '#addHomeworkForm', function (e) {
                 e.preventDefault();
+
                 const scheduleId = parseInt($('#scheduleSelect').val(), 10);
                 if (existingHomeworks.includes(scheduleId)) {
                     showHomeworkMessage('Домашнее задание на это занятие уже добавлено', 'danger');
                     return;
                 }
+
                 const payload = {
                     schedule_id: scheduleId,
                     description: $('#homeworkDescription').val()
                 };
+
                 $.ajax({
                     url: `${API_BASE}/homeworks`,
                     method: "POST",
-                    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
                     data: JSON.stringify(payload),
                     success: function () {
                         showHomeworkMessage('Домашнее задание успешно добавлено', 'success');
@@ -130,13 +142,16 @@ function _init() {
         }
 
         renderAddHomeworkForm();
+
         if (role === 'Преподаватель') {
             $.ajax({
                 url: `${API_BASE}/groups/info`,
                 method: "GET",
                 headers: { "Authorization": `Bearer ${token}` }
             }).done(function (groups) {
-                teacherGroupIds = groups.filter(g => g.teacher && g.teacher.user_id === userId).map(g => g.group_id);
+                teacherGroupIds = groups
+                    .filter(g => g.teacher && g.teacher.user_id === userId)
+                    .map(g => g.group_id);
             }).always(function () {
                 loadSchedules();
             });
