@@ -58,18 +58,19 @@ $(document).ready(function () {
                         schedules = schedules.filter(s => teacherGroupIds.includes(s.group.group_id));
                     }
                     const today = new Date();
-                    schedules.sort((a, b) => {
-                        const dateA = new Date(a.date);
-                        const dateB = new Date(b.date);
-                        const now = new Date();
+                    today.setHours(0, 0, 0, 0);
 
-                        const isFutureA = dateA >= now;
-                        const isFutureB = dateB >= now;
+                    const upcoming = schedules
+                        .filter(s => new Date(s.date) >= today)
+                        .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-                        if (isFutureA && !isFutureB) return -1; // A будущее, B прошлое → A выше
-                        if (!isFutureA && isFutureB) return 1;  // A прошлое, B будущее → B выше
-                        return dateA - dateB; // одинаковый тип → сортируем по дате
-                    });
+                    const past = schedules
+                        .filter(s => new Date(s.date) < today)
+                        // если хотите, чтобы самые свежие прошедшие шли первыми:
+                        .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                    // Сливаем так, чтобы сначала шли upcoming, потом past
+                    schedules = [...upcoming, ...past];
                     const options = schedules.map(s => {
                         const lessonDate = new Date(s.date);
                         const diffDays = Math.floor((today - lessonDate) / (1000 * 60 * 60 * 24));
