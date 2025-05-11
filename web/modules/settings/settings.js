@@ -10,10 +10,10 @@ $(document).ready(function () {
               <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body pt-2">
-              <form id="settingsForm">
+              <form id="settingsForm" autocomplete="off">
                 <div class="mb-3">
                   <label class="form-label">Имя пользователя</label>
-                  <input type="text" class="form-control" id="setUsername" required>
+                  <input type="text" class="form-control" id="setUsername" autocomplete="off" required>
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Имя</label>
@@ -29,7 +29,7 @@ $(document).ready(function () {
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Новый пароль</label>
-                  <input type="password" class="form-control" id="setPassword" placeholder="Оставьте пустым, если не менять">
+                  <input type="password" class="form-control" id="setPassword" autocomplete="new-password" placeholder="Оставьте пустым, если не менять">
                 </div>
                 <!-- Здесь будут и ошибки, и успех -->
                 <div id="settingsMsg" class="text-center mb-3" style="display:none;"></div>
@@ -74,6 +74,7 @@ $(document).ready(function () {
             .text("Не удалось загрузить настройки")
             .show();
           $("#settingsModal").modal("show");
+          console.log("Error response:", xhr.responseText);
         }
       });
     });
@@ -122,5 +123,6 @@ $(document).ready(function () {
         }
       });
     });
-  });
+    console.log("Payload being sent:", payload);  
+});
   
