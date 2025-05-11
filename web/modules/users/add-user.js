@@ -146,16 +146,27 @@ $(document).ready(function () {
             contentType: "application/json",
             headers: { "Authorization": `Bearer ${token}` },
             data: JSON.stringify(data),
-            success: function() {
+            success: function () {
                 $('#addUserForm')[0].reset();
                 getFilteredUsers();
-                // Показать сообщение об успехе на 3 секунды
                 $('#addUserMsg')
-                  .text('Пользователь успешно создан')
-                  .show();
+                    .removeClass("text-danger")
+                    .addClass("text-success")
+                    .text('Пользователь успешно создан')
+                    .show();
                 setTimeout(() => { $('#addUserMsg').fadeOut(); }, 3000);
+            },
+            error: function (xhr) {
+                const errorMsg = xhr.responseJSON?.detail || "Произошла ошибка при создании пользователя";
+                $('#addUserMsg')
+                    .removeClass("text-success")
+                    .addClass("text-danger")
+                    .text(errorMsg)
+                    .show();
+                setTimeout(() => { $('#addUserMsg').fadeOut(); }, 5000);
             }
         });
+
     });
 
     // Начальная загрузка

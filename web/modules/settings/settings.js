@@ -100,12 +100,12 @@ $(document).ready(function () {
         contentType: "application/json",
         headers: { "Authorization": `Bearer ${token}` },
         data: JSON.stringify(payload),
-        success: function () {
-          $("#settingsMsg")
-            .removeClass("text-danger")
-            .addClass("text-success")
-            .text("Настройки успешно сохранены")
-            .show();
+        success: function (data) {
+        $("#settingsMsg")
+          .removeClass("text-danger")
+          .addClass("text-success")
+          .text(data.message || "Настройки успешно сохранены")
+          .show();
           // через секунду скрываем модалку и перезагружаем
           setTimeout(() => {
             $("#settingsModal").modal("hide");

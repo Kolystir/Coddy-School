@@ -64,10 +64,12 @@ $(document).ready(function () {
                         const ago = getDaysAgoString(diffDays);
                         const groupName = s.group?.group_name || '-';
                         const isHomeworkSet = existingHomeworks.includes(s.schedule_id);
+                        const formattedDate = lessonDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
                         return `<option value="${s.schedule_id}" ${isHomeworkSet ? 'disabled' : ''} style="background-color: ${isHomeworkSet ? '#d4edda' : '#f8d7da'};">
-                            ${s.date} (${ago}) / ${groupName}${isHomeworkSet ? ' - ДЗ добавлено' : ''}
+                            ${formattedDate} (${ago}) / ${groupName}${isHomeworkSet ? ' - ДЗ добавлено' : ''}
                         </option>`;
                     }).join('');
+
                     $('#scheduleSelect').append(options);
                 });
             },

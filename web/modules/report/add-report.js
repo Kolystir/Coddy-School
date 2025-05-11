@@ -64,10 +64,12 @@ $(document).ready(function () {
                         const ago = getDaysAgoString(diffDays);
                         const groupName = s.group?.group_name || '-';
                         const isReported = existingReports.includes(s.schedule_id);
+                        const formattedDate = lessonDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
                         return `<option value="${s.schedule_id}" ${isReported ? 'disabled' : ''} style="background-color: ${isReported ? '#d4edda' : '#f8d7da'};">
-                            ${s.date} (${ago}) / ${groupName}${isReported ? ' - Отчёт добавлен' : ''}
+                            ${formattedDate} (${ago}) / ${groupName}${isReported ? ' - Отчёт добавлен' : ''}
                         </option>`;
                     }).join('');
+
                     $('#scheduleSelect').append(options);
                 });
             },

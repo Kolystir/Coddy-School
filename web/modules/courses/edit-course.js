@@ -110,6 +110,7 @@ $(document).ready(function () {
     deleteModal = new bootstrap.Modal($("#deleteConfirmModal")[0]);
   }
 
+
   function loadTeacherOptions() {
     $.ajax({
       url: `${API_BASE}/teachers`,
@@ -147,7 +148,7 @@ $(document).ready(function () {
     deleteModal.show();
   });
 
-  $(document).on("click", "#confirmDeleteBtn", function () {
+ $(document).on("click", "#confirmDeleteBtn", function () {
     const id = window.courseToDelete;
     $.ajax({
       url: `${API_BASE}/courses/${id}`,
@@ -156,18 +157,15 @@ $(document).ready(function () {
       success(res) {
         showNotification(res.message, "success");
         deleteModal.hide();
-        $(".modal-backdrop").remove();
-        $("body").removeClass("modal-open").css("overflow", "auto");
-        loadCourseList();
+        // Перезагрузка списка произойдёт при скрытии модалки
       },
       error(xhr) {
         showNotification("Ошибка при удалении: " + xhr.responseText, "error");
         deleteModal.hide();
-        $(".modal-backdrop").remove();
-        $("body").removeClass("modal-open").css("overflow", "auto");
       }
     });
   });
+
 
   $(document).on("click", ".editCourseButton", function () {
     loadEditForm($(this).data("course-id"));
@@ -245,6 +243,10 @@ $(document).ready(function () {
 
     $("#teacherSelect").select2({ placeholder: "Выберите преподавателей", allowClear: true });
     $("#backToList").on("click", loadCourseList);
+    $("#deleteConfirmModal").on("hidden.bs.modal", function () {
+      loadCourseList();
+    });
+
 
     $("#editCourseForm").off("submit").on("submit", function (e) {
       e.preventDefault();

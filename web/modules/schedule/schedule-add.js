@@ -159,6 +159,18 @@ $(document).ready(function() {
         });
     }
 
+    function formatRussianDate(dateStr) {
+        const months = [
+            "января", "февраля", "марта", "апреля", "мая", "июня",
+            "июля", "августа", "сентября", "октября", "ноября", "декабря"
+        ];
+        const [year, month, day] = dateStr.split("-");
+        const monthName = months[parseInt(month, 10) - 1];
+        return `${parseInt(day, 10)} ${monthName} ${year}`;
+    }
+
+
+
     function renderSchedules(list) {
         const tbody = $('#schedulesTable tbody').empty();
         if (!list.length) {
@@ -170,7 +182,7 @@ $(document).ready(function() {
             if (role === "Преподаватель" && !allGroups.some(g => g.group_id === item.group.group_id)) return;
             tbody.append(
                 `<tr>
-                    <td>${item.date}</td>
+                    <td>${formatRussianDate(item.date)}</td>
                     <td>${item.start_time}</td>
                     <td>${item.end_time}</td>
                     <td>${item.group.group_name}</td>

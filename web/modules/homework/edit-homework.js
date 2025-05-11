@@ -157,6 +157,15 @@ $(document).ready(function () {
         renderHomeworkItems(homeworks);
     }
 
+    function formatDate(dateStr) {
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('ru-RU', options);
+    }
+
+
+
+
     function renderHomeworkItems(homeworks) {
         const today = new Date();
         const upcoming = [], past = [];
@@ -176,7 +185,7 @@ $(document).ready(function () {
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
                         <div><strong>Группа:</strong> ${group.group_name || '—'}</div>
-                        <div><strong>Дата занятия:</strong> ${sched.date || '—'} (${ago})</div>
+                        <div><strong>Дата занятия:</strong> ${sched.date ? formatDate(sched.date) : '—'} (${ago})</div>
                         <div><strong>ДЗ:</strong> ${hw.description || 'Без описания'}</div>
                     </div>
                     <div class="d-flex gap-2">

@@ -42,6 +42,16 @@ $(document).ready(function () {
         return Math.ceil((date2 - date1) / (1000 * 60 * 60 * 24));
     }
 
+    function formatRussianDate(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString("ru-RU", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+    }
+
+
     function getScheduleDayInfo(scheduleDateStr) {
         const now = new Date();
         const scheduleDate = new Date(scheduleDateStr);
@@ -126,7 +136,7 @@ $(document).ready(function () {
                         <div class="card ${cardClass} h-100">
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title text-primary">👥 ${schedule.group.group_name}</h5>
-                                <p class="mb-1"><strong>🗓 Дата:</strong> ${schedule.date} (${dayInfo})</p>
+                                <p class="mb-1"><strong>🗓 Дата:</strong> ${formatRussianDate(schedule.date)} (${dayInfo})</p>
                                 <p class="mb-1"><strong>⏰ Время:</strong> ${schedule.start_time} – ${schedule.end_time}</p>
                                 ${badge}
                                 <hr class="my-2" />
