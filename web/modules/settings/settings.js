@@ -86,20 +86,25 @@ $(document).ready(function () {
     // 3) Сохранение изменений
     $(document).on("click", "#settingsSubmit", function () {
       const token = localStorage.getItem("token");
-      if (!token) {
-        window.location.href = "/login";
-        return;
-      }
+      if (!token) return window.location.href = "/login";
+
       const payload = {
         username: $("#setUsername").val(),
         first_name: $("#setFirstName").val(),
         last_name: $("#setLastName").val(),
         middle_name: $("#setMiddleName").val(),
-        email: $("#setEmail").val(),
+        // не берём email сразу:
+        // email: $("#setEmail").val(),
       };
+
+      const emailVal = $("#setEmail").val();
+      if (emailVal) {
+        payload.email = emailVal;
+      }
       const pw = $("#setPassword").val();
       if (pw) payload.password = pw;
-  
+
+      console.log("Payload before send:", payload);
       $.ajax({
         url: `${API_BASE}/users/me`,
         method: "PUT",
@@ -107,27 +112,33 @@ $(document).ready(function () {
         headers: { "Authorization": `Bearer ${token}` },
         data: JSON.stringify(payload),
         success: function (data) {
-        $("#settingsMsg")
-          .removeClass("text-danger")
-          .addClass("text-success")
-          .text(data.message || "Настройки успешно сохранены")
-          .show();
-          // через секунду скрываем модалку и перезагружаем
+          $("#settingsMsg")
+            .removeClass("text-danger")
+            .addClass("text-success")
+            .text(data.message || "Настройки успешно сохранены")
+            .show();
+
+          // —————— Сохраняем в localStorage новые ФИО ——————
+          localStorage.setItem("lastname", payload.last_name);
+          localStorage.setItem("firstname", payload.first_name);
+          localStorage.setItem("middlename", payload.middle_name || "");
+
+          // через секунду перезагружаем, чтобы Navbar обновился
           setTimeout(() => {
             $("#settingsModal").modal("hide");
             location.reload();
           }, 1000);
         },
         error: function (xhr) {
-          const err = xhr.responseJSON?.detail || "Ошибка при сохранении";
+          const err = xhr.responseJSON?.detail || xhr.responseText || "Ошибка при сохранении";
           $("#settingsMsg")
             .removeClass("text-success")
             .addClass("text-danger")
             .text(err)
             .show();
+          console.error("Save error:", xhr);
         }
       });
     });
-    console.log("Payload being sent:", payload);  
 });
   

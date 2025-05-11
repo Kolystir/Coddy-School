@@ -36,6 +36,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
         "username": user.Username,
         "first_name": user.First_Name,
         "last_name": user.Last_Name,
+        "middle_name": user.Middle_Name,
         "email": user.Email,
         "role": user.Role
     }
