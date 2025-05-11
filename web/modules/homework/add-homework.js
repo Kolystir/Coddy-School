@@ -81,12 +81,21 @@ $(document).ready(function () {
 
     function getDaysAgoString(diff) {
         if (diff === 0) return 'сегодня';
-        if (diff === 1) return '1 день назад';
-        const rem10 = diff % 10;
-        const rem100 = diff % 100;
-        if (rem10 >= 2 && rem10 <= 4 && !(rem100 >= 12 && rem100 <= 14)) return diff + ' дня назад';
-        return diff + ' дней назад';
+        const absDiff = Math.abs(diff);
+
+        const rem10 = absDiff % 10;
+        const rem100 = absDiff % 100;
+        let suffix = 'дней';
+
+        if (rem10 === 1 && rem100 !== 11) {
+            suffix = 'день';
+        } else if (rem10 >= 2 && rem10 <= 4 && !(rem100 >= 12 && rem100 <= 14)) {
+            suffix = 'дня';
+        }
+
+        return diff > 0 ? `через ${absDiff} ${suffix}` : `${absDiff} ${suffix} назад`;
     }
+
 
     function bindHomeworkEvents() {
         $('#app').on('submit', '#addHomeworkForm', function (e) {

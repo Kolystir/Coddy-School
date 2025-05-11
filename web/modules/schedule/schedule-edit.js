@@ -102,7 +102,7 @@ $(document).ready(function () {
                     <div class="card-body d-flex flex-column justify-content-between">
                         <div>
                             <h5 class="card-title">${schedule.group.group_name}</h5>
-                            <p class="card-text">Дата: ${schedule.date} (${getWeekday(schedule.date)})<br>Время: ${schedule.start_time} - ${schedule.end_time}</p>
+                            <p class="card-text">Дата: ${formatDate(schedule.date)}<br>Время: ${schedule.start_time} - ${schedule.end_time}</p>
                         </div>
                         <div class="d-flex gap-2 justify-content-end">
                             <button class="btn btn-coddy rounded-circle p-2 editScheduleButton" data-schedule-id="${schedule.schedule_id}" style="width:40px; height:40px;">
@@ -122,6 +122,13 @@ $(document).ready(function () {
         const days = ["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"];
         return days[new Date(dateString).getDay()];
     }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' };
+        return date.toLocaleDateString('ru-RU', options);
+    }
+
 
     // Слушатели
     $(document).on('change', '#dateFilter, #groupFilter', applyFilters);
