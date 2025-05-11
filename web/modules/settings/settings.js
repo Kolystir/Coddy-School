@@ -78,7 +78,6 @@ $(document).ready(function () {
             .text("Не удалось загрузить настройки")
             .show();
           $("#settingsModal").modal("show");
-          console.log("Error response:", xhr.responseText);
         }
       });
     });
@@ -104,7 +103,6 @@ $(document).ready(function () {
       const pw = $("#setPassword").val();
       if (pw) payload.password = pw;
 
-      console.log("Payload before send:", payload);
       $.ajax({
         url: `${API_BASE}/users/me`,
         method: "PUT",

@@ -13,7 +13,6 @@ $(document).ready(function () {
                 $.getScript(fullPath)
                     .done(() => {
                         loadedScripts[key] = true;
-                        console.log(`✅ Script loaded: ${fullPath}`);
                         resolve();
                     })
                     .fail((jqxhr, settings, exception) => {
@@ -38,7 +37,6 @@ $(document).ready(function () {
 
             const initFn = window['init_' + moduleKey];
             if (typeof initFn === 'function') {
-                console.log(`🚀 Инициализация модуля: init_${moduleKey}`);
                 initFn();
             } else {
                 console.warn(`⚠️ Нет функции инициализации для модуля: init_${moduleKey}`);
@@ -138,7 +136,6 @@ $(document).ready(function () {
         Object.keys(loadedScripts).forEach(scriptKey => {
             if (typeof window[`cleanup_${scriptKey}`] === 'function') {
                 window[`cleanup_${scriptKey}`]();
-                console.log(`🧹 Cleanup выполнен для: ${scriptKey}`);
             }
         });
     });
