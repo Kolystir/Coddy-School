@@ -1,4 +1,4 @@
-function init_modules_courses_add_course_js() {
+function _init() {
     $(document).ready(function () {
         const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
         const token = localStorage.getItem("token");
@@ -140,4 +140,4 @@ function init_modules_courses_add_course_js() {
     });
 }
 
-window.init_modules_courses_add_course_js = init_modules_courses_add_course_js;
+window['init_modules_courses_add-course_js'] = _init;
