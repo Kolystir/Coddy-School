@@ -58,6 +58,18 @@ $(document).ready(function () {
                         schedules = schedules.filter(s => teacherGroupIds.includes(s.group.group_id));
                     }
                     const today = new Date();
+                    schedules.sort((a, b) => {
+                        const dateA = new Date(a.date);
+                        const dateB = new Date(b.date);
+                        const now = new Date();
+
+                        const isFutureA = dateA >= now;
+                        const isFutureB = dateB >= now;
+
+                        if (isFutureA && !isFutureB) return -1; // A будущее, B прошлое → A выше
+                        if (!isFutureA && isFutureB) return 1;  // A прошлое, B будущее → B выше
+                        return dateA - dateB; // одинаковый тип → сортируем по дате
+                    });
                     const options = schedules.map(s => {
                         const lessonDate = new Date(s.date);
                         const diffDays = Math.floor((today - lessonDate) / (1000 * 60 * 60 * 24));
