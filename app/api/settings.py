@@ -15,6 +15,7 @@ class SettingsUpdate(BaseModel):
     username: str | None = None
     first_name: str | None = None
     last_name: str | None = None
+    middle_name: str | None = None  # добавлено
     email: EmailStr | None = None
     password: str | None = None
 
@@ -28,13 +29,14 @@ def update_current_user(
     if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
 
-    # Обновляем поля, если есть в запросе
     if data.username is not None:
         user.Username = data.username
     if data.first_name is not None:
         user.First_Name = data.first_name
     if data.last_name is not None:
         user.Last_Name = data.last_name
+    if data.middle_name is not None:
+        user.Middle_Name = data.middle_name  # обновляем отчество
     if data.email is not None:
         user.Email = data.email
     if data.password:

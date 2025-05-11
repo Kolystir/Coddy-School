@@ -24,6 +24,10 @@ $(document).ready(function () {
                   <input type="text" class="form-control" id="setLastName">
                 </div>
                 <div class="mb-3">
+                  <label class="form-label">Отчество</label>
+                  <input type="text" class="form-control" id="setMiddleName">
+                </div>
+                <div class="mb-3">
                   <label class="form-label">Email</label>
                   <input type="email" class="form-control" id="setEmail">
                 </div>
@@ -62,8 +66,8 @@ $(document).ready(function () {
           $("#setUsername").val(data.username);
           $("#setFirstName").val(data.first_name);
           $("#setLastName").val(data.last_name);
+          $("#setMiddleName").val(data.middle_name || "");
           $("#setEmail").val(data.email || "");
-          // очистим сообщения
           $("#settingsMsg").hide().removeClass("text-danger text-success").text("");
           $("#settingsModal").modal("show");
         },
@@ -90,6 +94,7 @@ $(document).ready(function () {
         username: $("#setUsername").val(),
         first_name: $("#setFirstName").val(),
         last_name: $("#setLastName").val(),
+        middle_name: $("#setMiddleName").val(),
         email: $("#setEmail").val(),
       };
       const pw = $("#setPassword").val();
