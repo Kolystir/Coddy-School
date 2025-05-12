@@ -248,6 +248,7 @@ function _init() {
             <div class="modal-body">${message}</div>
             <div class="modal-footer">
               <button id="confirmYes" type="button" class="btn btn-danger">Да</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
             </div>
           </div>
         </div>
@@ -257,23 +258,23 @@ function _init() {
     const modal = new bootstrap.Modal(modalEl);
     modal.show();
 
-    let confirmed = false;
-
+    // Обработчик подтверждения
     $(document).off('click', '#confirmYes').on('click', '#confirmYes', function () {
-      confirmed = true;
+      // Дождаться закрытия модального окна, затем вызвать onConfirm
+      $('#confirmModal').one('hidden.bs.modal', function () {
+        $('.modal-backdrop').remove(); // На всякий случай вручную убираем фон
+        $('body').removeClass('modal-open').css('overflow', '');
+        onConfirm();
+      });
       modal.hide();
     });
 
-    $(modalEl).on('hidden.bs.modal', function () {
+    // Удаление модального окна при закрытии
+    $('#confirmModal').on('hidden.bs.modal', function () {
       $('#confirmModal').remove();
-      $('.modal-backdrop').remove();
-      $('body').removeClass('modal-open').css('overflow', '');
-
-      if (confirmed) {
-        onConfirm(); // Только после закрытия модалки
-      }
     });
   }
+
   });
 }
 window['init_modules_users_edit-user_js'] = _init;
