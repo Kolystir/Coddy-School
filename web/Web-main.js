@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    emailjs.init('ORC1f8hJlctjQbTpW');
     const API_BASE = "https://kolystir-coddy-school-5925.twc1.net";
   function loadWelcomeSection() {
     const welcomeHTML = `
@@ -171,37 +172,37 @@ $(document).ready(function () {
                 </div>
                 <div class="col-lg-7">
                     <form>
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
+                        <form id="contact-form">
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
                                 <div class="form-outline">
-                                    <input type="text" id="form3Example1" class="form-control" />
+                                    <input type="text" name="from_name"   id="form3Example1" class="form-control" required />
                                     <label class="form-label" for="form3Example1">Имя</label>
                                 </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
+                                </div>
+                                <div class="col-md-6 mb-4">
                                 <div class="form-outline">
-                                    <input type="email" id="form3Example2" class="form-control" />
+                                    <input type="email" name="reply_email" id="form3Example2" class="form-control" required />
                                     <label class="form-label" for="form3Example2">Электронная почта</label>
                                 </div>
-                            </div>
-                            <div class="col-md-12 mb-4">
+                                </div>
+                                <div class="col-md-12 mb-4">
                                 <div class="form-outline">
-                                    <input type="text" id="form3Example3" class="form-control" />
+                                    <input type="text" name="subject"      id="form3Example3" class="form-control" required />
                                     <label class="form-label" for="form3Example3">Тема</label>
                                 </div>
-                            </div>
-                            <div class="col-md-12 mb-4">
+                                </div>
+                                <div class="col-md-12 mb-4">
                                 <div class="form-outline">
-                                    <textarea class="form-control" id="form4Example3" rows="4"></textarea>
+                                    <textarea name="message" id="form4Example3" rows="4" class="form-control" required></textarea>
                                     <label class="form-label" for="form4Example3">Сообщение</label>
                                 </div>
+                                </div>
+                                <div class="col-md-12 text-center">
+                                <button type="submit" class="btn-coddy">Отправить сообщение</button>
+                                </div>
                             </div>
-                            <div class="col-md-12 text-center">
-                                <button type="submit" class="btn-coddy">
-                                    Отправить сообщение
-                                </button>
-                            </div>
-                        </div>
+                            </form>
                     </form>
                 </div>
             </div>
