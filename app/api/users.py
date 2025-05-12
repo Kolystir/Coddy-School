@@ -93,6 +93,7 @@ def get_users(db: Session = Depends(get_db)):
             "last_name": user.Last_Name,
             "middle_name": user.Middle_Name,
             "role": user.Role,
+            "email": user.Email,
         } for user in users
     ]
 

@@ -271,7 +271,6 @@ function _init() {
             <div class="modal-body">${message}</div>
             <div class="modal-footer">
               <button id="confirmYes" type="button" class="btn btn-danger">Да</button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
             </div>
           </div>
         </div>
