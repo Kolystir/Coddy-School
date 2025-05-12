@@ -209,6 +209,21 @@ function _init() {
       });
     }
 
+    function toastTemplate() {
+      return `
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+          <div id="infoToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body"></div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Закрыть"></button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+
+
     function modalTemplate() {
       return `
         <div class="modal fade" id="infoModal" tabindex="-1">
@@ -229,14 +244,22 @@ function _init() {
     }
 
     function showModal(message) {
-      const modalEl = $('#infoModal');
-      if (!modalEl.length) $('body').append(modalTemplate());
-      $('#infoModal .modal-body').text(message);
-      new bootstrap.Modal(document.getElementById('infoModal')).show();
+      if (!$('#infoToast').length) {
+        $('body').append(toastTemplate());
+      }
+      $('#infoToast .toast-body').text(message);
+
+      const toastEl = document.getElementById('infoToast');
+      const toast = new bootstrap.Toast(toastEl, { delay: 3000 }); // Автоскрытие через 3 сек
+      toast.show();
     }
+    $('#infoToast').on('hidden.bs.toast', function () {
+      $(this).closest('.position-fixed').remove();
+    });
+
 
     function showConfirmModal(message, onConfirm) {
-    $('#confirmModal').remove(); // Удалить, если уже есть
+    $('#confirmModal').remove(); 
     const confirmHtml = `
       <div class="modal fade" id="confirmModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered" style="margin-top: -100px;">
@@ -260,11 +283,15 @@ function _init() {
 
     // Обработчик подтверждения
     $(document).off('click', '#confirmYes').on('click', '#confirmYes', function () {
-      // Дождаться закрытия модального окна, затем вызвать onConfirm
       $('#confirmModal').one('hidden.bs.modal', function () {
-        $('.modal-backdrop').remove(); // На всякий случай вручную убираем фон
+        $('#confirmModal').remove();
+        $('.modal-backdrop').remove();
         $('body').removeClass('modal-open').css('overflow', '');
-        onConfirm();
+
+        // ОТЛОЖЕННЫЙ вызов onConfirm, чтобы дать Bootstrap время "очиститься"
+        setTimeout(() => {
+          onConfirm();
+        }, 300); // Можно и меньше, но 300 мс — безопасно
       });
       modal.hide();
     });
