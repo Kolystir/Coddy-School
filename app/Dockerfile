@@ -16,6 +16,7 @@ EXPOSE 8000
 
 # Запускаем приложение через Uvicorn
 # Импортируем FastAPI-приложение из app/main.py
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "run.py"]
+
 # Копируем переменные окружения
 COPY .env .env
