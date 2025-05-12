@@ -159,57 +159,72 @@ $(document).ready(function () {
     });
   }
 
-  function loadLocationSection() {
+    function loadLocationSection() {
     const locationHTML = `
-          <section class="text-center container my-5" id="feedback">
-            <h3 class="mb-5 mainh1">Свяжитесь с нами</h3>
-            <div class="row">
-                <div class="col-lg-5 mb-4 mb-lg-0">
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2128.4433161532525!2d40.934219999999996!3d57.759876!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46ad501f7a78296f%3A0xf1bcb40c05a913df!2z0JvQtdGB0L3QsNGPINGD0LsuLCAxMSwg0JrQvtGB0YLRgNC-0LzQsCwg0JrQvtGB0YLRgNC-0LzRgdC60LDRjyDQvtCx0LsuLCAxNTYwMDA!5e0!3m2!1sru!2sru!4v1731096345711!5m2!1sru!2sru"
-                        width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-                <div class="col-lg-7">
-                    <form>
-                        <form id="contact-form">
-                            <div class="row">
-                                <div class="col-md-6 mb-4">
-                                <div class="form-outline">
-                                    <input type="text" name="from_name"   id="form3Example1" class="form-control" required />
-                                    <label class="form-label" for="form3Example1">Имя</label>
-                                </div>
-                                </div>
-                                <div class="col-md-6 mb-4">
-                                <div class="form-outline">
-                                    <input type="email" name="reply_email" id="form3Example2" class="form-control" required />
-                                    <label class="form-label" for="form3Example2">Электронная почта</label>
-                                </div>
-                                </div>
-                                <div class="col-md-12 mb-4">
-                                <div class="form-outline">
-                                    <input type="text" name="subject"      id="form3Example3" class="form-control" required />
-                                    <label class="form-label" for="form3Example3">Тема</label>
-                                </div>
-                                </div>
-                                <div class="col-md-12 mb-4">
-                                <div class="form-outline">
-                                    <textarea name="message" id="form4Example3" rows="4" class="form-control" required></textarea>
-                                    <label class="form-label" for="form4Example3">Сообщение</label>
-                                </div>
-                                </div>
-                                <div class="col-md-12 text-center">
-                                <button type="submit" class="btn-coddy">Отправить сообщение</button>
-                                </div>
-                            </div>
-                            </form>
-                    </form>
-                </div>
+        <section class="text-center container my-5" id="feedback">
+        <h3 class="mb-5 mainh1">Свяжитесь с нами</h3>
+        <div class="row">
+            <div class="col-lg-5 mb-4 mb-lg-0">
+            <iframe src="…ваш iframe…" width="100%" height="450" style="border:0;" allowfullscreen loading="lazy"></iframe>
             </div>
+            <div class="col-lg-7">
+            <form id="contact-form">
+                <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="form-outline">
+                    <input type="text"   name="from_name"   id="form3Example1" class="form-control" required />
+                    <label class="form-label" for="form3Example1">Имя</label>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="form-outline">
+                    <input type="email"  name="reply_email" id="form3Example2" class="form-control" required />
+                    <label class="form-label" for="form3Example2">Электронная почта</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-4">
+                    <div class="form-outline">
+                    <input type="text"   name="subject"      id="form3Example3" class="form-control" required />
+                    <label class="form-label" for="form3Example3">Тема</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mb-4">
+                    <div class="form-outline">
+                    <textarea name="message" id="form4Example3" rows="4" class="form-control" required></textarea>
+                    <label class="form-label" for="form4Example3">Сообщение</label>
+                    </div>
+                </div>
+                <div class="col-md-12 text-center">
+                    <button type="submit" class="btn-coddy">Отправить сообщение</button>
+                </div>
+                </div>
+            </form>
+            </div>
+        </div>
         </section>
-      `;
+    `;
     $("#app").append(locationHTML);
-  }
+
+    // вот тут — единственный submit-handler
+    $('#contact-form').on('submit', function(e) {
+        e.preventDefault();
+        const params = {
+        from_name:   $('#form3Example1').val(),
+        reply_email: $('#form3Example2').val(),
+        subject:     $('#form3Example3').val(),
+        message:     $('#form4Example3').val()
+        };
+        emailjs.send('service_vw0tsld', 'template_1xdnuqj', params)
+        .then(() => {
+            alert('Сообщение отправлено успешно!');
+            this.reset();
+        }, (err) => {
+            console.error('Ошибка EmailJS:', err);
+            alert('Ошибка отправки, попробуйте позже.');
+        });
+    });
+    }
+
 
 
 function loadPreview() {
