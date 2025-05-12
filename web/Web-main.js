@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
+    const API_BASE = "https://kolystir-coddy-school-5925.twc1.net";
   function loadWelcomeSection() {
     const welcomeHTML = `
               <section id="hero">

@@ -1,6 +1,6 @@
 function _init() {
     $(document).ready(function () {
-        const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
+        const API_BASE = "https://kolystir-coddy-school-5925.twc1.net";
         const token = localStorage.getItem("token");
         if (!token) {
             alert("Вы не авторизованы. Пожалуйста, войдите в систему.");

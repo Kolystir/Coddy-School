@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  const API_BASE = "https://mature-nissy-kolystir-dbf3058a.koyeb.app";
+  const API_BASE = "https://kolystir-coddy-school-5925.twc1.net";
   const authModalHtml = `
     <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
