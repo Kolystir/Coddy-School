@@ -109,6 +109,9 @@ function _init() {
       loadTeacherOptions();
 
       deleteModal = new bootstrap.Modal($("#deleteConfirmModal")[0]);
+      $("#deleteConfirmModal").on("hidden.bs.modal", function () {
+        loadCourseList();
+      });
     }
 
 
@@ -244,9 +247,7 @@ function _init() {
 
       $("#teacherSelect").select2({ placeholder: "Выберите преподавателей", allowClear: true });
       $("#backToList").on("click", loadCourseList);
-      $("#deleteConfirmModal").on("hidden.bs.modal", function () {
-        loadCourseList();
-      });
+      
 
 
       $("#editCourseForm").off("submit").on("submit", function (e) {

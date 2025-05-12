@@ -448,3 +448,10 @@ nav {
  font-size: .775em;
  color: #ffbb08;
 }
+.round-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

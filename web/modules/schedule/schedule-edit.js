@@ -94,11 +94,14 @@ function _init() {
                                 <p class="card-text">Дата: ${formatDate(s.date)}<br>Время: ${s.start_time} - ${s.end_time}</p>
                             </div>
                             <div class="d-flex gap-2 justify-content-end">
-                                <button class="btn btn-coddy rounded-circle p-2 editScheduleButton" data-schedule-id="${s.schedule_id}">
-                                    <i class="bi bi-pencil"></i>
+                                <button class="btn btn-coddy rounded-circle round-btn editScheduleButton"
+                                        data-schedule-id="${s.schedule_id}">
+                                <i class="bi bi-pencil"></i>
                                 </button>
-                                <button class="btn btn-danger rounded-circle p-2 deleteScheduleButton" data-schedule-id="${s.schedule_id}">
-                                    <i class="bi bi-trash"></i>
+
+                                <button class="btn btn-danger rounded-circle round-btn deleteScheduleButton"
+                                        data-schedule-id="${s.schedule_id}">
+                                <i class="bi bi-trash"></i>
                                 </button>
                             </div>
                         </div>

@@ -168,11 +168,15 @@ function _init() {
                             <div><strong>ДЗ:</strong> ${hw.description || 'Без описания'}</div>
                         </div>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-coddy rounded-circle editHomework" data-id="${hw.homework_id}" data-description="${hw.description || ''}">
-                                <i class="bi bi-pencil"></i>
+                            <button class="btn btn-coddy rounded-circle round-btn editHomework"
+                                    data-id="${hw.homework_id}"
+                                    data-description="${hw.description || ''}">
+                            <i class="bi bi-pencil"></i>
                             </button>
-                            <button class="btn btn-danger rounded-circle deleteHomework" data-id="${hw.homework_id}">
-                                <i class="bi bi-trash"></i>
+
+                            <button class="btn btn-danger rounded-circle round-btn deleteHomework"
+                                    data-id="${hw.homework_id}">
+                            <i class="bi bi-trash"></i>
                             </button>
                         </div>
                     </li>`;

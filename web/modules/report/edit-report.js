@@ -168,11 +168,15 @@ function _init() {
                             <div><strong>Отчёт:</strong> ${rp.description || 'Без описания'}</div>
                         </div>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-coddy rounded-circle editReport" data-id="${rp.report_id}" data-description="${rp.description || ''}">
-                                <i class="bi bi-pencil"></i>
+                            <button class="btn btn-coddy rounded-circle round-btn editReport"
+                                    data-id="${rp.report_id}"
+                                    data-description="${rp.description || ''}">
+                            <i class="bi bi-pencil"></i>
                             </button>
-                            <button class="btn btn-danger rounded-circle deleteReport" data-id="${rp.report_id}">
-                                <i class="bi bi-trash"></i>
+
+                            <button class="btn btn-danger rounded-circle round-btn deleteReport"
+                                    data-id="${rp.report_id}">
+                            <i class="bi bi-trash"></i>
                             </button>
                         </div>
                     </li>`;
