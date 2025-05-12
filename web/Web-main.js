@@ -165,7 +165,7 @@ $(document).ready(function () {
         <h3 class="mb-5 mainh1">Свяжитесь с нами</h3>
         <div class="row">
             <div class="col-lg-5 mb-4 mb-lg-0">
-            <iframe src="…ваш iframe…" width="100%" height="450" style="border:0;" allowfullscreen loading="lazy"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2128.4433176909515!2d40.931645077521466!3d57.75987597389263!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46ad501f7b8857b3%3A0x24bffadbbd7725e5!2z0KLQtdC90LfQvtGA!5e0!3m2!1sru!2sfr!4v1747068235848!5m2!1sru!2sfr" width="100%" height="450" style="border:0;" allowfullscreen loading="lazy"></iframe>
             </div>
             <div class="col-lg-7">
             <form id="contact-form">
