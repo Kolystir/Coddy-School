@@ -236,37 +236,44 @@ function _init() {
     }
 
     function showConfirmModal(message, onConfirm) {
-      $('#confirmModal').remove(); // Удалить, если уже есть
-      const confirmHtml = `
-        <div class="modal fade" id="confirmModal" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered" style="margin-top: -100px;">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Подтверждение</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-              </div>
-              <div class="modal-body">${message}</div>
-              <div class="modal-footer">
-                <button id="confirmYes" type="button" class="btn btn-danger">Да</button>
-              </div>
+    $('#confirmModal').remove(); // Удалить, если уже есть
+    const confirmHtml = `
+      <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" style="margin-top: -100px;">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Подтверждение</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">${message}</div>
+            <div class="modal-footer">
+              <button id="confirmYes" type="button" class="btn btn-danger">Да</button>
             </div>
           </div>
-        </div>`;
-      $('body').append(confirmHtml);
-      const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
-      modal.show();
+        </div>
+      </div>`;
+    $('body').append(confirmHtml);
+    const modalEl = document.getElementById('confirmModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
 
-      $(document).off('click', '#confirmYes').on('click', '#confirmYes', function () {
-        modal.hide();
-        onConfirm();
-      });
+    let confirmed = false;
 
-      $('#confirmModal').on('hidden.bs.modal', function () {
-        $('#confirmModal').remove();
-        $('.modal-backdrop').remove();
-        $('body').removeClass('modal-open').css('overflow', '');
-      });
-    }
+    $(document).off('click', '#confirmYes').on('click', '#confirmYes', function () {
+      confirmed = true;
+      modal.hide();
+    });
+
+    $(modalEl).on('hidden.bs.modal', function () {
+      $('#confirmModal').remove();
+      $('.modal-backdrop').remove();
+      $('body').removeClass('modal-open').css('overflow', '');
+
+      if (confirmed) {
+        onConfirm(); // Только после закрытия модалки
+      }
+    });
+  }
   });
 }
 window['init_modules_users_edit-user_js'] = _init;
