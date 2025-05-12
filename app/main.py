@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import router
+import os
+print("💡 DATABASE_URL =", os.getenv("DATABASE_URL"))
 
 app = FastAPI()
 
