@@ -78,10 +78,10 @@ function _init() {
                 Email: ${user.email || 'Нет'}
               </p>
               <div class="d-flex gap-2 justify-content-end">
-                <button class="btn btn-coddy rounded-circle editUserButton" data-user-id="${user.user_id}" style="width:40px;height:40px;">
+                <button class="btn btn-coddy rounded-circle editUserButton round-btn" data-user-id="${user.user_id}" style="width:40px;height:40px;">
                   <i class="bi bi-pencil"></i>
                 </button>
-                <button class="btn btn-danger rounded-circle deleteUserButton" data-user-id="${user.user_id}" style="width:40px;height:40px;">
+                <button class="btn btn-danger rounded-circle deleteUserButton round-btn" data-user-id="${user.user_id}" style="width:40px;height:40px;">
                   <i class="bi bi-trash"></i>
                 </button>
               </div>
