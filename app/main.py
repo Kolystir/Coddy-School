@@ -18,5 +18,5 @@ app.add_middleware(
 async def root():
     return {"status": "ok"}
 
-# 3) Ваши API‑роуты
+# 3) API‑роуты
 app.include_router(router)

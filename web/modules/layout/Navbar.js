@@ -96,18 +96,18 @@ $(document).ready(function () {
     if (!token) {
       // Guest menu
       itemsHtml += `
-        <li class="nav-item"><a class="nav-link" href="">Преподаватели</a></li>
-        <li class="nav-item"><a class="nav-link" href="">Курсы</a></li>
-        <li class="nav-item"><a class="nav-link" href="">Обратная связь</a></li>
+        <li class="nav-item"><a class="nav-link" href="#teachers">Преподаватели</a></li>
+        <li class="nav-item"><a class="nav-link" href="#courses">Курсы</a></li>
+        <li class="nav-item"><a class="nav-link" href="#feedback">Обратная связь</a></li>
         <li class="nav-item"><a class="nav-link" href="" id="authorization-link">Войти</a></li>
       `;
     } else {
       // Common for all authenticated
       if (role === "Родитель" || role === "Ученик") {
         itemsHtml += `
-          <li class="nav-item"><a class="nav-link" href="">Преподаватели</a></li>
-          <li class="nav-item"><a class="nav-link" href="">Курсы</a></li>
-          <li class="nav-item"><a class="nav-link" href="">Обратная связь</a></li>
+          <li class="nav-item"><a class="nav-link" href="#teachers">Преподаватели</a></li>
+          <li class="nav-item"><a class="nav-link" href="#courses">Курсы</a></li>
+          <li class="nav-item"><a class="nav-link" href="#feedback">Обратная связь</a></li>
           <li class="nav-item"><a class="nav-link" href="" id="schedule">Расписание</a></li>
         `;
       } else if (role === "Преподаватель") {
